@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.football-data.org)",
+      "WebFetch(domain:www.thesportsdb.com)",
+      "WebFetch(domain:docs.football-data.org)",
+      "WebFetch(domain:www.wc2026api.com)",
+      "WebFetch(domain:sportsapis.dev)",
+      "WebFetch(domain:api.openligadb.de)",
+      "WebFetch(domain:gist.github.com)",
+      "Bash(node --version:*)"
+    ]
+  }
+}
