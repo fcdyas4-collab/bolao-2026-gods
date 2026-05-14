@@ -1253,6 +1253,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
         <div class="special-item"><label>Terceiro lugar 🥉</label><input type="text" id="sp-third" placeholder="ex: Alemanha"></div>
         <div class="special-item"><label>Artilheiro ⚽</label><input type="text" id="sp-top" placeholder="ex: Mbappé"></div>
         <div class="special-item"><label>Melhor jogador 🌟</label><input type="text" id="sp-mvp" placeholder="ex: Rodri"></div>
+        <div class="special-item"><label>Melhor goleiro 🧤</label><input type="text" id="sp-keeper" placeholder="ex: Alisson"></div>
       </div>
       <button class="btn btn-gold" id="save-special-btn" style="margin-top:12px;width:100%" onclick="saveSpecial()">💾 Salvar palpites especiais</button>
       <div class="small-note" id="special-save-note">Preencha seus palpites e clique em salvar.</div>
@@ -1311,6 +1312,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
         <div class="special-result-item"><label>Terceiro lugar 🥉</label><input type="text" id="actual-third" placeholder="ex: Alemanha"></div>
         <div class="special-result-item"><label>Artilheiro ⚽</label><input type="text" id="actual-top" placeholder="ex: Mbappé"></div>
         <div class="special-result-item"><label>Melhor jogador 🌟</label><input type="text" id="actual-mvp" placeholder="ex: Rodri"></div>
+        <div class="special-result-item"><label>Melhor goleiro 🧤</label><input type="text" id="actual-keeper" placeholder="ex: Alisson"></div>
       </div>
       <button class="btn btn-gold" style="margin-top:12px;width:100%" onclick="saveSpecialResults()">💾 Salvar resultados finais</button>
       <div class="small-note">Dica: escreva os nomes do mesmo jeito que os participantes usaram nos palpites especiais para evitar divergências.</div>
@@ -1341,6 +1343,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
           <div class="pts-item"><label>Terceiro lugar</label><input type="number" id="pts-third" value="10" min="0"></div>
           <div class="pts-item"><label>Artilheiro</label><input type="number" id="pts-top" value="15" min="0"></div>
           <div class="pts-item"><label>Melhor jogador</label><input type="number" id="pts-mvp" value="10" min="0"></div>
+          <div class="pts-item"><label>Melhor goleiro</label><input type="number" id="pts-keeper" value="10" min="0"></div>
         </div>
       </div>
       <div id="admin-config-btns" style="margin-top:12px;display:none">
@@ -1443,7 +1446,7 @@ let myName = null;
 let isAdmin = false;
 const DEFAULT_PTS = {
   exact:5, winner:3, goalsTeam:1, diff:1,
-  champ:20, second:15, third:10, top:15, mvp:10
+  champ:20, second:15, third:10, top:15, mvp:10, keeper:10
 };
 let state = { users:{}, players:{}, games:{}, predictions:{}, special:{}, specialResults:{}, settings:{specialLocked:false}, pts:{...DEFAULT_PTS}};
 const COLORS = 10;
@@ -1639,11 +1642,11 @@ function setupListeners(){
   db.ref('pts').on('value', snap => {
     const savedPts = snap.val() || {};
     state.pts = {...DEFAULT_PTS, ...savedPts};
-    const needsScoringMigration = Object.keys(DEFAULT_PTS).some(k => Number(state.pts[k]) !== Number(DEFAULT_PTS[k]));
-    if(needsScoringMigration){
-      state.pts = {...DEFAULT_PTS};
-      db.ref('pts').update(DEFAULT_PTS);
-    }
+    const missingPts = {};
+    Object.keys(DEFAULT_PTS).forEach(k => {
+      if(savedPts[k] === undefined || savedPts[k] === null || savedPts[k] === '') missingPts[k] = DEFAULT_PTS[k];
+    });
+    if(Object.keys(missingPts).length) db.ref('pts').update(missingPts);
     loadPtsUI();
     renderMySpecialScore();
     if(document.getElementById('tab-regras').classList.contains('hidden')===false) renderRules();
@@ -2374,7 +2377,7 @@ function renderPlayers(){
 // ─── Points Config ───────────────────────────────────────────────
 function loadPtsUI(){
   const map = {exact:'pts-exact',winner:'pts-winner',goalsTeam:'pts-gteam',diff:'pts-diff',
-    champ:'pts-champ',second:'pts-second',third:'pts-third',top:'pts-top',mvp:'pts-mvp'};
+    champ:'pts-champ',second:'pts-second',third:'pts-third',top:'pts-top',mvp:'pts-mvp',keeper:'pts-keeper'};
   Object.entries(map).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.value=state.pts[k]||0; });
 }
 
@@ -2389,12 +2392,13 @@ function savePts(){
     second:+document.getElementById('pts-second').value,
     third:+document.getElementById('pts-third').value,
     top:+document.getElementById('pts-top').value,
-    mvp:+document.getElementById('pts-mvp').value
+    mvp:+document.getElementById('pts-mvp').value,
+    keeper:+document.getElementById('pts-keeper').value
   };
   db.ref('pts').set(pts);
 }
 
-const SPECIAL_KEYS = ['champ','second','third','top','mvp'];
+const SPECIAL_KEYS = ['champ','second','third','top','mvp','keeper'];
 
 // ─── Special Predictions ─────────────────────────────────────────
 function getSpecialDeadline(){
@@ -2507,7 +2511,7 @@ function saveSpecialResults(){
 function calcSpecialBreakdown(pid){
   const pred = (state.special||{})[pid] || {};
   const res = state.specialResults || {};
-  const labels = {champ:'Campeão', second:'Vice-campeão', third:'Terceiro lugar', top:'Artilheiro', mvp:'Melhor jogador'};
+  const labels = {champ:'Campeão', second:'Vice-campeão', third:'Terceiro lugar', top:'Artilheiro', mvp:'Melhor jogador', keeper:'Melhor goleiro'};
   const details = SPECIAL_KEYS.map(k=>{
     const officialFilled = !!String(res[k]||'').trim();
     const userFilled = !!String(pred[k]||'').trim();
@@ -2544,7 +2548,7 @@ function renderAdminSpecialPredictions(){
   const el = document.getElementById('admin-special-list');
   if(!el) return;
   if(!isAdmin){ el.innerHTML=''; return; }
-  const labels = {champ:'Campeão', second:'Vice', third:'3º lugar', top:'Artilheiro', mvp:'Melhor jogador'};
+  const labels = {champ:'Campeão', second:'Vice', third:'3º lugar', top:'Artilheiro', mvp:'Melhor jogador', keeper:'Melhor goleiro'};
   const players = bettingPlayers();
   if(!players.length){ el.innerHTML='<div class="small-note">Nenhum participante cadastrado nos palpites.</div>'; return; }
   el.innerHTML = players.map(p=>{
@@ -3195,7 +3199,7 @@ function renderRules(){
     <div><strong>2. Limite dos placares:</strong> os palpites dos jogos aceitam apenas números de 0 a 20 para cada seleção.</div>
     <div><strong>3. Visibilidade dos palpites:</strong> os palpites dos outros participantes ficam ocultos até o início do jogo.</div>
     <div><strong>4. Pontuação cumulativa:</strong> em cada jogo, os pontos acumulam entre placar exato, vencedor/empate, gols exatos de cada time e diferença de gols.</div>
-    <div><strong>5. Palpites especiais:</strong> campeão, vice, terceiro lugar, artilheiro e melhor jogador. Eles só pontuam quando o admin preencher os resultados oficiais.</div>
+    <div><strong>5. Palpites especiais:</strong> campeão, vice, terceiro lugar, artilheiro, melhor jogador e melhor goleiro. Eles só pontuam quando o admin preencher os resultados oficiais.</div>
     <div><strong>6. Formato Copa 2026:</strong> 48 seleções, 12 grupos de 4, fase de 32, oitavas, quartas, semifinais, disputa de 3º lugar e final.</div>
   </div></div>
   <div class="section"><div class="section-title">🎯 Pontuação dos jogos</div>
@@ -3219,6 +3223,7 @@ function renderRules(){
         <tr><td>Terceiro lugar</td><td>${state.pts.third}</td></tr>
         <tr><td>Artilheiro</td><td>${state.pts.top}</td></tr>
         <tr><td>Melhor jogador</td><td>${state.pts.mvp}</td></tr>
+        <tr><td>Melhor goleiro</td><td>${state.pts.keeper}</td></tr>
       </tbody>
     </table>
     <div class="small-note">Os palpites especiais só entram no ranking depois que o admin preencher os resultados finais oficiais.</div>
