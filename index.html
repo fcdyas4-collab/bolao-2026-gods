@@ -1163,6 +1163,21 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
   flex-shrink:0;
 }
 
+
+/* ===== PREDICTION DEADLINE NOTE ===== */
+.prediction-deadline-note{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.35;
+  text-align:center;
+  margin-top:6px;
+}
+.prediction-deadline-note.locked{color:var(--red);font-weight:800}
+.prediction-deadline-note.open{color:var(--green);font-weight:800}
+@media(max-width:760px){
+  .prediction-deadline-note{font-size:13px;margin-top:4px;padding:0 6px}
+}
+
 </style>
 </head>
 <body>
@@ -1452,7 +1467,7 @@ let state = { users:{}, players:{}, games:{}, predictions:{}, special:{}, specia
 const COLORS = 10;
 const ENTRY_CODE = 'COPA2026';
 const ADMIN_LOGIN = 'ADMIN';
-const ADMIN_PASSWORD = '9999';
+const ADMIN_PASSWORD = '981408440';
 const HARD_CODED_ADMIN_ID = 'admin';
 const CURRENT_APP_VERSION = 'login_flags_reset_v4_app_zerado_teste';
 let editingGameId = null;
@@ -1513,7 +1528,7 @@ function ensureHardcodedAdminInFirebase(){
 function startHardcodedAdminSession(){
   const adminUser = hardcodedAdminUser();
   // Login ADMIN fica enraizado no HTML: mesmo se o Firebase estiver sem o usuário admin
-  // ou a senha tiver sido resetada por engano, ADMIN / 9999 sempre entra como administrador.
+  // ou a senha tiver sido resetada por engano, ADMIN / 981408440 sempre entra como administrador.
   ensureHardcodedAdminInFirebase().catch(err=>console.warn('Não foi possível sincronizar ADMIN no Firebase:', err)).finally(()=>{
     startSession(adminUser);
   });
@@ -1609,16 +1624,17 @@ function bootstrapAppData(){
   return db.ref('settings/appVersion').once('value').then(snap=>{
     if(snap.val() === CURRENT_APP_VERSION) return;
     const adminUser = hardcodedAdminUser();
+
+    // Bootstrap seguro:
+    // - Garante apenas o ADMIN fixo e a versão do app.
+    // - NÃO apaga palpites, palpites especiais, resultados finais, ranking, jogos ou usuários existentes.
+    // - A única rotina que deve apagar palpites é resetAllPredictions(), com confirmação explícita do admin.
     const updates = {
-      users: {[HARD_CODED_ADMIN_ID]: adminUser},
-      players: {[HARD_CODED_ADMIN_ID]: {id:HARD_CODED_ADMIN_ID, name:'ADMIN', colorIdx:0, admin:true}},
-      predictions: null,
-      special: null,
-      specialResults: null,
-      rankingHistory: null,
-      'settings/appVersion': CURRENT_APP_VERSION,
-      'settings/specialLocked': false
+      ['users/' + HARD_CODED_ADMIN_ID]: adminUser,
+      ['players/' + HARD_CODED_ADMIN_ID]: {id:HARD_CODED_ADMIN_ID, name:'ADMIN', colorIdx:0, admin:true},
+      'settings/appVersion': CURRENT_APP_VERSION
     };
+
     return db.ref().update(updates);
   }).catch(err=>console.error('Erro no bootstrap:', err));
 }
@@ -1927,6 +1943,24 @@ function getPredictionDeadline(g){
   if(!start) return null;
   return new Date(start.getTime() - 60*60*1000);
 }
+function formatPredictionDeadline(g){
+  const deadline = getPredictionDeadline(g);
+  if(!deadline) return '';
+  return deadline.toLocaleString('pt-BR', {
+    day:'2-digit',
+    month:'2-digit',
+    hour:'2-digit',
+    minute:'2-digit'
+  });
+}
+function predictionDeadlineNote(g){
+  const hasResult = g && g.actualHome!==null && g.actualHome!==undefined && g.actualAway!==null && g.actualAway!==undefined;
+  if(hasResult) return 'Jogo encerrado: palpites bloqueados.';
+  if(g && g.predictionLockOverride === 'locked') return 'Palpites travados manualmente pelo admin.';
+  if(g && g.predictionLockOverride === 'unlocked') return 'Palpites liberados manualmente pelo admin.';
+  const formatted = formatPredictionDeadline(g);
+  return formatted ? `Palpites abertos até ${formatted} BRT.` : 'Palpites abertos até 1 hora antes do jogo.';
+}
 function isGameLocked(g){
   if(!g) return false;
   if(g.predictionLockOverride === 'locked') return true;
@@ -2150,8 +2184,8 @@ const WORLD_CUP_2026_FIXTURES = [
   {home:'United States',away:'Paraguay',stage:'Grupo D',utc:'2026-06-13T01:00:00Z',venue:'Los Angeles Stadium, Los Angeles'},
   {home:'Qatar',away:'Switzerland',stage:'Grupo B',utc:'2026-06-13T19:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
   {home:'Brazil',away:'Morocco',stage:'Grupo C',utc:'2026-06-13T22:00:00Z',venue:'New York New Jersey Stadium, New Jersey'},
-  {home:'Haiti',away:'Scotland',stage:'Grupo C',utc:'2026-06-14T00:30:00Z',venue:'Boston Stadium, Boston'},
-  {home:'Australia',away:'Turkiye',stage:'Grupo D',utc:'2026-06-13T04:00:00Z',venue:'BC Place, Vancouver'},
+  {home:'Haiti',away:'Scotland',stage:'Grupo C',utc:'2026-06-14T01:00:00Z',venue:'Boston Stadium, Boston'},
+  {home:'Australia',away:'Turkiye',stage:'Grupo D',utc:'2026-06-14T04:00:00Z',venue:'BC Place, Vancouver'},
   {home:'Germany',away:'Curacao',stage:'Grupo E',utc:'2026-06-14T17:00:00Z',venue:'Houston Stadium, Houston'},
   {home:'Netherlands',away:'Japan',stage:'Grupo F',utc:'2026-06-14T20:00:00Z',venue:'Dallas Stadium, Dallas'},
   {home:'Ivory Coast',away:'Ecuador',stage:'Grupo E',utc:'2026-06-14T23:00:00Z',venue:'Philadelphia Stadium, Philadelphia'},
@@ -2163,7 +2197,7 @@ const WORLD_CUP_2026_FIXTURES = [
   {home:'France',away:'Senegal',stage:'Grupo I',utc:'2026-06-16T19:00:00Z',venue:'New York New Jersey Stadium, New Jersey'},
   {home:'Iraq',away:'Norway',stage:'Grupo I',utc:'2026-06-16T22:00:00Z',venue:'Boston Stadium, Boston'},
   {home:'Argentina',away:'Algeria',stage:'Grupo J',utc:'2026-06-17T01:00:00Z',venue:'Kansas City Stadium, Kansas City'},
-  {home:'Austria',away:'Jordan',stage:'Grupo J',utc:'2026-06-16T04:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
+  {home:'Austria',away:'Jordan',stage:'Grupo J',utc:'2026-06-17T04:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
   {home:'Portugal',away:'DR Congo',stage:'Grupo K',utc:'2026-06-17T17:00:00Z',venue:'Houston Stadium, Houston'},
   {home:'England',away:'Croatia',stage:'Grupo L',utc:'2026-06-17T20:00:00Z',venue:'Dallas Stadium, Dallas'},
   {home:'Ghana',away:'Panama',stage:'Grupo L',utc:'2026-06-17T23:00:00Z',venue:'Toronto Stadium, Toronto'},
@@ -2174,12 +2208,12 @@ const WORLD_CUP_2026_FIXTURES = [
   {home:'Mexico',away:'South Korea',stage:'Grupo A',utc:'2026-06-19T01:00:00Z',venue:'Estadio Guadalajara, Zapopan'},
   {home:'Scotland',away:'Morocco',stage:'Grupo C',utc:'2026-06-19T22:00:00Z',venue:'Boston Stadium, Boston'},
   {home:'United States',away:'Australia',stage:'Grupo D',utc:'2026-06-19T19:00:00Z',venue:'Seattle Stadium, Seattle'},
-  {home:'Brazil',away:'Haiti',stage:'Grupo C',utc:'2026-06-20T01:00:00Z',venue:'Philadelphia Stadium, Philadelphia'},
-  {home:'Turkiye',away:'Paraguay',stage:'Grupo D',utc:'2026-06-19T04:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
+  {home:'Brazil',away:'Haiti',stage:'Grupo C',utc:'2026-06-20T00:30:00Z',venue:'Philadelphia Stadium, Philadelphia'},
+  {home:'Turkiye',away:'Paraguay',stage:'Grupo D',utc:'2026-06-20T03:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
   {home:'Netherlands',away:'Sweden',stage:'Grupo F',utc:'2026-06-20T17:00:00Z',venue:'Houston Stadium, Houston'},
   {home:'Germany',away:'Ivory Coast',stage:'Grupo E',utc:'2026-06-20T20:00:00Z',venue:'Toronto Stadium, Toronto'},
   {home:'Ecuador',away:'Curacao',stage:'Grupo E',utc:'2026-06-21T00:00:00Z',venue:'Kansas City Stadium, Kansas City'},
-  {home:'Tunisia',away:'Japan',stage:'Grupo F',utc:'2026-06-20T04:00:00Z',venue:'Estadio Monterrey, Guadalupe'},
+  {home:'Tunisia',away:'Japan',stage:'Grupo F',utc:'2026-06-21T04:00:00Z',venue:'Estadio Monterrey, Guadalupe'},
   {home:'Spain',away:'Saudi Arabia',stage:'Grupo H',utc:'2026-06-21T16:00:00Z',venue:'Atlanta Stadium, Atlanta'},
   {home:'Belgium',away:'Iran',stage:'Grupo G',utc:'2026-06-21T19:00:00Z',venue:'Los Angeles Stadium, Los Angeles'},
   {home:'Uruguay',away:'Cape Verde',stage:'Grupo H',utc:'2026-06-21T22:00:00Z',venue:'Miami Stadium, Miami'},
@@ -2187,7 +2221,7 @@ const WORLD_CUP_2026_FIXTURES = [
   {home:'Argentina',away:'Austria',stage:'Grupo J',utc:'2026-06-22T17:00:00Z',venue:'Dallas Stadium, Dallas'},
   {home:'France',away:'Iraq',stage:'Grupo I',utc:'2026-06-22T21:00:00Z',venue:'Philadelphia Stadium, Philadelphia'},
   {home:'Norway',away:'Senegal',stage:'Grupo I',utc:'2026-06-23T00:00:00Z',venue:'New York New Jersey Stadium, New Jersey'},
-  {home:'Jordan',away:'Algeria',stage:'Grupo J',utc:'2026-06-22T03:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
+  {home:'Jordan',away:'Algeria',stage:'Grupo J',utc:'2026-06-23T03:00:00Z',venue:'San Francisco Bay Area Stadium, San Francisco'},
   {home:'Portugal',away:'Uzbekistan',stage:'Grupo K',utc:'2026-06-23T17:00:00Z',venue:'Houston Stadium, Houston'},
   {home:'England',away:'Ghana',stage:'Grupo L',utc:'2026-06-23T20:00:00Z',venue:'Boston Stadium, Boston'},
   {home:'Panama',away:'Croatia',stage:'Grupo L',utc:'2026-06-23T23:00:00Z',venue:'Toronto Stadium, Toronto'},
@@ -2228,22 +2262,22 @@ const WORLD_CUP_2026_FIXTURES = [
   {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-01T20:00:00Z',venue:'Seattle Stadium, Seattle'},
   {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-02T23:00:00Z',venue:'Toronto Stadium, Toronto'},
   {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-02T19:00:00Z',venue:'Los Angeles Stadium, Los Angeles'},
-  {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-02T03:00:00Z',venue:'BC Place, Vancouver'},
-  {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-03T20:00:00Z',venue:'Atlanta Stadium, Atlanta'},
+  {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-03T03:00:00Z',venue:'BC Place, Vancouver'},
+  {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-03T22:00:00Z',venue:'Miami Stadium, Miami'},
   {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-04T01:30:00Z',venue:'Kansas City Stadium, Kansas City'},
   {home:'A definir',away:'A definir',stage:'Fase de 32',utc:'2026-07-03T18:00:00Z',venue:'Dallas Stadium, Dallas'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-04T21:00:00Z',venue:'Philadelphia Stadium, Philadelphia'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-04T17:00:00Z',venue:'Houston Stadium, Houston'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-05T20:00:00Z',venue:'New York New Jersey Stadium, New Jersey'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-06T00:00:00Z',venue:'Mexico City Stadium, Mexico City'},
-  {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-06T18:00:00Z',venue:'Dallas Stadium, Dallas'},
-  {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-06T23:00:00Z',venue:'Seattle Stadium, Seattle'},
+  {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-06T19:00:00Z',venue:'Dallas Stadium, Dallas'},
+  {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-07T00:00:00Z',venue:'Seattle Stadium, Seattle'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-07T16:00:00Z',venue:'Atlanta Stadium, Atlanta'},
   {home:'A definir',away:'A definir',stage:'Oitavas',utc:'2026-07-07T20:00:00Z',venue:'BC Place, Vancouver'},
   {home:'A definir',away:'A definir',stage:'Quartas',utc:'2026-07-09T20:00:00Z',venue:'Boston Stadium, Boston'},
   {home:'A definir',away:'A definir',stage:'Quartas',utc:'2026-07-10T19:00:00Z',venue:'Los Angeles Stadium, Los Angeles'},
   {home:'A definir',away:'A definir',stage:'Quartas',utc:'2026-07-11T21:00:00Z',venue:'Miami Stadium, Miami'},
-  {home:'A definir',away:'A definir',stage:'Quartas',utc:'2026-07-12T00:00:00Z',venue:'Kansas City Stadium, Kansas City'},
+  {home:'A definir',away:'A definir',stage:'Quartas',utc:'2026-07-12T01:00:00Z',venue:'Kansas City Stadium, Kansas City'},
   {home:'A definir',away:'A definir',stage:'Semifinal',utc:'2026-07-14T19:00:00Z',venue:'Dallas Stadium, Dallas'},
   {home:'A definir',away:'A definir',stage:'Semifinal',utc:'2026-07-15T19:00:00Z',venue:'Atlanta Stadium, Atlanta'},
   {home:'A definir',away:'A definir',stage:'3º Lugar',utc:'2026-07-18T21:00:00Z',venue:'Miami Stadium, Miami'},
@@ -2824,7 +2858,7 @@ function renderGameCard(g){
         : '<span style="color:var(--muted);font-size:12px">Aguardando resultado</span>'}
     </div>
     ${g.venue ? `<div class="small-note">📍 ${escapeHTML(g.venue)}</div>` : ''}
-    <div class="small-note">${canPredict ? 'Palpites abertos até 1 hora antes do jogo. Use apenas números inteiros de 0 a 20.' : 'Palpites travados para este jogo.'} ${showOthers ? '' : 'Os palpites dos outros participantes ficam ocultos até o início do jogo.'}</div>
+    <div class="small-note">${predictionDeadlineNote(g)} Use apenas números inteiros de 0 a 20. ${showOthers ? '' : 'Os palpites dos outros participantes ficam ocultos até o início do jogo.'}</div>
     ${currentPlayerIsBetting ? `<div class="preds-label" style="margin-top:8px">MEU PALPITE ${myPredictionSaved?'· ✅ SALVO':'· NÃO SALVO'} ${myPts!==null?`· ${myPts} pts`:''}</div>${myPredictionBox}` : '<div class="small-note" style="margin-top:8px">Admin não participa dos palpites.</div>'}
     ${players.length > (currentPlayerIsBetting ? 1 : 0)
       ? `<button class="btn btn-outline pred-toggle" onclick="togglePredictions('${g.id}')">${predOpen?'Ocultar palpites dos outros':'Ver palpites'} (${players.length-(currentPlayerIsBetting?1:0)})</button>${predOpen?`<div class="preds-label" style="margin-top:8px">PALPITES</div>${otherPredRows}`:''}`
@@ -3036,6 +3070,8 @@ function renderPhaseReferenceMatch(g){
   const dateTime = `${escapeHTML(gameDateOnly(g))} ${escapeHTML(gameHourOnly(g))}`.trim();
   const gStatus = getGameDisplayStatus(g);
   const statusBadge = gStatus.label ? `<span class="game-status-badge ${gStatus.css}">${gStatus.label}</span> ` : '';
+  const deadlineNote = predictionDeadlineNote(g);
+  const deadlineNoteClass = canEditPrediction(g) ? 'open' : 'locked';
   return `<div class="phase-ref-match${gStatus.status==='live'||gStatus.status==='halftime'?' phase-ref-live':''}">
     <div class="phase-ref-time">${statusBadge}${dateTime}<div class="brt-note">Horário de Brasília</div></div>
     <div class="phase-ref-body">
@@ -3051,12 +3087,14 @@ function renderPhaseReferenceMatch(g){
           <input id="pred-away-${g.id}" type="number" min="0" max="20" step="1" inputmode="numeric" value="${myPred.away??''}" placeholder="" ${canPredict?'':'readonly'} oninput="markPredictionDirty('${g.id}')">
         </div>
         <button class="phase-ref-save" ${canPredict?'':'disabled'} onclick="saveGamePrediction('${g.id}')">Salvar</button>
-        <div id="pred-save-msg-${g.id}" class="phase-ref-status ${saved?'saved':''}">${myPts!==null?`${myPts} pts`:saved?'Palpite salvo':'Não salvo'}</div>` : (isAdmin ? `<div class="phase-ref-score">
+        <div id="pred-save-msg-${g.id}" class="phase-ref-status ${saved?'saved':''}">${myPts!==null?`${myPts} pts`:saved?'Palpite salvo':'Não salvo'}</div>
+        <div class="prediction-deadline-note ${deadlineNoteClass}">${escapeHTML(deadlineNote)}</div>` : (isAdmin ? `<div class="phase-ref-score">
           <input type="number" min="0" max="20" step="1" inputmode="numeric" value="${g.actualHome??''}" placeholder="?" oninput="setActual('${g.id}','home',this.value)">
           <span class="phase-ref-vs">vs</span>
           <input type="number" min="0" max="20" step="1" inputmode="numeric" value="${g.actualAway??''}" placeholder="?" oninput="setActual('${g.id}','away',this.value)">
         </div>
-        <div class="phase-ref-status saved">Admin: lançar resultado final</div>` : `<div class="phase-ref-score"><span class="phase-ref-vs">vs</span></div><div class="phase-ref-status">Admin não participa</div>`)}
+        <div class="phase-ref-status saved">Admin: lançar resultado final</div>
+        <div class="prediction-deadline-note ${deadlineNoteClass}">${escapeHTML(deadlineNote)}</div>` : `<div class="phase-ref-score"><span class="phase-ref-vs">vs</span></div><div class="phase-ref-status">Admin não participa</div>`)}
         ${gameResultOrLiveHTML(g)}
         ${isAdmin ? `<div class="phase-admin-tools only-edit">
           <button class="btn btn-outline phase-admin-edit" type="button" onclick="openModal('${g.id}')">Editar jogo</button>
