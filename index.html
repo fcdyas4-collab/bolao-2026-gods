@@ -1526,6 +1526,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 .copy-actions{display:flex;gap:8px;align-items:center;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;flex-wrap:wrap}
 .copy-actions .btn{font-size:13px;padding:9px 12px}
 .copy-note{font-size:12px;color:var(--muted);line-height:1.3}
+
+.share-image-hint{font-size:12px;color:var(--muted);line-height:1.3}
 .rank-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
 .rank-title-row .section-title{margin-bottom:0}
 .rank-move{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:13px;min-width:42px;text-align:center;font-weight:900;white-space:nowrap}
@@ -2249,6 +2251,166 @@ function moveShareText(move){
   return move.delta > 0 ? `▲ +${move.delta}` : `▼ -${Math.abs(move.delta)}`;
 }
 
+function safeFileNamePart(value){
+  return normalizeText(value || 'bolao').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40) || 'bolao';
+}
+function imageEllipsis(ctx, text, maxWidth){
+  const txt = cleanShareCell(text);
+  if(ctx.measureText(txt).width <= maxWidth) return txt;
+  let out = txt;
+  while(out.length > 1 && ctx.measureText(out + '…').width > maxWidth) out = out.slice(0,-1);
+  return out + '…';
+}
+function drawRoundedRect(ctx, x, y, w, h, r){
+  const radius = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+radius,y);
+  ctx.arcTo(x+w,y,x+w,y+h,radius);
+  ctx.arcTo(x+w,y+h,x,y+h,radius);
+  ctx.arcTo(x,y+h,x,y,radius);
+  ctx.arcTo(x,y,x+w,y,radius);
+  ctx.closePath();
+}
+function buildShareTableCanvas({title, subtitle='', headers=[], rows=[], footer='', filename=''}){
+  const canvas = document.createElement('canvas');
+  const width = 1080;
+  const padding = 54;
+  const headerH = 60;
+  const rowH = 54;
+  const topH = 156;
+  const footerH = footer ? 58 : 28;
+  const height = topH + headerH + Math.max(rows.length,1)*rowH + footerH + padding;
+  const scale = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,width,height);
+
+  ctx.fillStyle = '#ff3158';
+  ctx.fillRect(0,0,width,12);
+
+  ctx.fillStyle = '#111827';
+  ctx.font = '900 40px Arial, sans-serif';
+  ctx.fillText(imageEllipsis(ctx, title, width - padding*2), padding, 72);
+
+  if(subtitle){
+    ctx.fillStyle = '#6f7787';
+    ctx.font = '700 24px Arial, sans-serif';
+    ctx.fillText(imageEllipsis(ctx, subtitle, width - padding*2), padding, 112);
+  }
+
+  const tableX = padding;
+  const tableY = topH;
+  const tableW = width - padding*2;
+  const colRatios = headers.length === 4 ? [0.10,0.52,0.22,0.16] : headers.map(()=>1/headers.length);
+  const colWidths = colRatios.map(r=>Math.floor(tableW*r));
+  colWidths[colWidths.length-1] += tableW - colWidths.reduce((a,b)=>a+b,0);
+
+  drawRoundedRect(ctx, tableX, tableY, tableW, headerH + Math.max(rows.length,1)*rowH, 18);
+  ctx.fillStyle = '#f8f9fc';
+  ctx.fill();
+  ctx.strokeStyle = '#e6eaf2';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = '#294d73';
+  drawRoundedRect(ctx, tableX, tableY, tableW, headerH, 18);
+  ctx.fill();
+  ctx.fillRect(tableX, tableY + headerH - 18, tableW, 18);
+
+  let x = tableX;
+  ctx.font = '900 22px Arial, sans-serif';
+  headers.forEach((h, i)=>{
+    const alignRight = i === 0 || i >= 2;
+    ctx.fillStyle = '#ffffff';
+    const text = imageEllipsis(ctx, h, colWidths[i]-24);
+    const tx = alignRight ? x + colWidths[i] - 18 - ctx.measureText(text).width : x + 18;
+    ctx.fillText(text, tx, tableY + 39);
+    x += colWidths[i];
+  });
+
+  const drawRows = rows.length ? rows : [['-','Sem dados','','']];
+  drawRows.forEach((row, rIdx)=>{
+    const y = tableY + headerH + rIdx*rowH;
+    if(rIdx % 2 === 1){
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(tableX, y, tableW, rowH);
+    }
+    ctx.strokeStyle = '#edf0f6';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(tableX, y);
+    ctx.lineTo(tableX + tableW, y);
+    ctx.stroke();
+
+    let cx = tableX;
+    row.forEach((cell, cIdx)=>{
+      const raw = cleanShareCell(cell);
+      const isMoveUp = /▲|subiu/i.test(raw);
+      const isMoveDown = /▼|caiu/i.test(raw);
+      ctx.fillStyle = isMoveUp ? '#16a36b' : isMoveDown ? '#ff3158' : '#20222b';
+      ctx.font = cIdx === 1 ? '800 24px Arial, sans-serif' : '900 24px Arial, sans-serif';
+      const text = imageEllipsis(ctx, raw, colWidths[cIdx]-24);
+      const alignRight = cIdx === 0 || cIdx >= 2;
+      const tx = alignRight ? cx + colWidths[cIdx] - 18 - ctx.measureText(text).width : cx + 18;
+      ctx.fillText(text, tx, y + 36);
+      cx += colWidths[cIdx];
+    });
+  });
+
+  if(footer){
+    ctx.fillStyle = '#6f7787';
+    ctx.font = '700 20px Arial, sans-serif';
+    ctx.fillText(imageEllipsis(ctx, footer, width - padding*2), padding, height - 38);
+  }
+
+  return canvas;
+}
+function canvasToBlob(canvas){
+  return new Promise(resolve=>canvas.toBlob(resolve, 'image/png', 0.96));
+}
+async function exportTableImageForWhatsApp(config){
+  try{
+    const canvas = buildShareTableCanvas(config);
+    const blob = await canvasToBlob(canvas);
+    if(!blob) throw new Error('Não foi possível gerar a imagem.');
+    const filename = (config.filename || 'bolao-copa-2026') + '.png';
+    const file = new File([blob], filename, {type:'image/png'});
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:config.title || 'Bolão Copa 2026', text:config.subtitle || ''});
+      return;
+    }
+
+    if(navigator.clipboard && window.ClipboardItem && window.isSecureContext){
+      try{
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+        alert('Imagem copiada! Agora é só colar no WhatsApp.');
+        return;
+      }catch(e){
+        // Fallback para download abaixo.
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    alert('Imagem gerada e baixada. Agora é só enviar no WhatsApp.');
+  }catch(err){
+    alert('Não consegui gerar a imagem: ' + (err && err.message ? err.message : err));
+  }
+}
+
 
 const WORLD_CUP_2026_FLAGS = {
   // Grupo A
@@ -2484,11 +2646,44 @@ function knockoutMetaHTML(g){
 }
 
 
+const BOLAO_TIMEZONE = 'America/Sao_Paulo';
+const BOLAO_BRT_UTC_OFFSET_HOURS = 3; // Jogos cadastrados em horário de Brasília (UTC-03).
+
+function parseBrasiliaDateTime(dateStr, timeStr='00:00'){
+  if(!dateStr) return null;
+  const dateParts = String(dateStr).split('-').map(Number);
+  if(dateParts.length < 3 || dateParts.some(n=>!Number.isFinite(n))) return null;
+  const timeMatch = String(timeStr || '00:00').match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  const hh = timeMatch ? Number(timeMatch[1]) : 0;
+  const mm = timeMatch ? Number(timeMatch[2]) : 0;
+  const ss = timeMatch && timeMatch[3] ? Number(timeMatch[3]) : 0;
+  if(!Number.isFinite(hh) || !Number.isFinite(mm) || !Number.isFinite(ss)) return null;
+  const [year, month, day] = dateParts;
+  const d = new Date(Date.UTC(year, month-1, day, hh + BOLAO_BRT_UTC_OFFSET_HOURS, mm, ss));
+  return isNaN(d.getTime()) ? null : d;
+}
+function parseBrasiliaDateNoon(dateStr){
+  return parseBrasiliaDateTime(dateStr, '12:00');
+}
+function getBrasiliaDateKey(date=new Date()){
+  const p = new Intl.DateTimeFormat('en-CA',{
+    timeZone:BOLAO_TIMEZONE,year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(date).reduce((a,x)=>{a[x.type]=x.value;return a;},{});
+  return `${p.year}-${p.month}-${p.day}`;
+}
+function addDaysToBrasiliaDateKey(dateKey, days){
+  const base = parseBrasiliaDateNoon(dateKey);
+  if(!base) return '';
+  const next = new Date(base.getTime() + (days*24*60*60*1000));
+  return getBrasiliaDateKey(next);
+}
+function formatInBrasilia(date, options){
+  if(!date || isNaN(date.getTime())) return '';
+  return date.toLocaleString('pt-BR', {...options, timeZone:BOLAO_TIMEZONE});
+}
 function getGameStart(g){
   if(!g || !g.date) return null;
-  const time = g.time || '00:00';
-  const d = new Date(`${g.date}T${time}`);
-  return isNaN(d.getTime()) ? null : d;
+  return parseBrasiliaDateTime(g.date, g.time || '00:00');
 }
 function getPredictionDeadline(g){
   const start = getGameStart(g);
@@ -2498,7 +2693,7 @@ function getPredictionDeadline(g){
 function formatPredictionDeadline(g){
   const deadline = getPredictionDeadline(g);
   if(!deadline) return '';
-  return deadline.toLocaleString('pt-BR', {
+  return formatInBrasilia(deadline, {
     day:'2-digit',
     month:'2-digit',
     hour:'2-digit',
@@ -2526,8 +2721,8 @@ function canEditPrediction(g){
 }
 function formatGameDateTime(g){
   if(!g || !g.date) return '';
-  const d = new Date(`${g.date}T12:00:00`);
-  const date = isNaN(d.getTime()) ? g.date : d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.', '');
+  const d = parseBrasiliaDateNoon(g.date);
+  const date = !d ? g.date : d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',timeZone:BOLAO_TIMEZONE}).replace('.', '');
   return g.time ? `${date} · ${g.time} BRT` : date;
 }function updateAdminUI(){
   const st = document.getElementById('admin-status');
@@ -3097,7 +3292,7 @@ function getSpecialDeadline(){
   let first = starts[0];
   if(!first && typeof WORLD_CUP_2026_FIXTURES !== 'undefined' && WORLD_CUP_2026_FIXTURES.length){
     const dt = localDateTimeFromUTC(WORLD_CUP_2026_FIXTURES[0].utc);
-    first = new Date(`${dt.date}T${dt.time}`);
+    first = parseBrasiliaDateTime(dt.date, dt.time);
   }
   if(!first || isNaN(first.getTime())) return null;
   return new Date(first.getTime() - 60*60*1000);
@@ -3627,9 +3822,9 @@ function roundKeyForGame(g){
 }
 function gameDateOnly(g){
   if(!g || !g.date) return '';
-  const d = new Date(`${g.date}T12:00:00`);
-  if(isNaN(d.getTime())) return g.date;
-  return d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).replace('.', '').replace(',', '');
+  const d = parseBrasiliaDateNoon(g.date);
+  if(!d) return g.date;
+  return d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',timeZone:BOLAO_TIMEZONE}).replace('.', '').replace(',', '');
 }
 function gameHourOnly(g){
   return g && g.time ? `${g.time} BRT` : '';
@@ -3722,19 +3917,21 @@ function predictionRowsForModal(g){
   }).join('');
 }
 
-function predictionsShareText(g){
-  const players = bettingPlayers();
-  const rows = players.map((p, idx)=>{
+function predictionShareRows(g){
+  return bettingPlayers().map((p, idx)=>{
     const pred = ((state.predictions||{})[g.id]||{})[p.id] || {};
     const hasPred = pred.home!==undefined && pred.home!=='' && pred.away!==undefined && pred.away!=='';
     const pts = calcPoints(g.id, p.id);
     return [
       String(idx+1),
-      truncateShareCell(p.name, 18),
+      p.name,
       hasPred ? `${pred.home} x ${pred.away}` : 'sem palpite',
       pts !== null ? String(pts) : '-'
     ];
   });
+}
+function predictionsShareText(g){
+  const rows = predictionShareRows(g).map(r=>[r[0], truncateShareCell(r[1], 18), r[2], r[3]]);
   const title = `🏆 Palpites · ${g.home || 'A definir'} x ${g.away || 'A definir'}`;
   const date = `📅 ${formatGameDateTime(g) || 'Data não definida'}`;
   const table = shareTable(['#','Jogador','Palpite','Pts'], rows, ['right','left','left','right']);
@@ -3745,10 +3942,26 @@ function copyPredictionsForWhatsApp(gid){
   const g = state.games[gid];
   if(!g) return;
   if(!canShowPredictionsForSharing(g)){
-    alert('Os palpites dos outros participantes ficam ocultos até 1 hora antes do jogo. Depois disso a cópia fica disponível.');
+    alert('Os palpites dos outros participantes ficam ocultos até 1 hora antes do jogo. Depois disso a exportação fica disponível.');
     return;
   }
   copyTextToClipboard(predictionsShareText(g), 'Palpites copiados! Agora é só colar no WhatsApp.');
+}
+async function exportPredictionsImageForWhatsApp(gid){
+  const g = state.games[gid];
+  if(!g) return;
+  if(!canShowPredictionsForSharing(g)){
+    alert('Os palpites dos outros participantes ficam ocultos até 1 hora antes do jogo. Depois disso a imagem fica disponível.');
+    return;
+  }
+  await exportTableImageForWhatsApp({
+    title:`Palpites · ${g.home || 'A definir'} x ${g.away || 'A definir'}`,
+    subtitle:formatGameDateTime(g) || 'Data não definida',
+    headers:['#','Jogador','Palpite','Pts'],
+    rows:predictionShareRows(g),
+    footer:'Bolão Copa 2026 · Palpites liberados 1h antes do jogo · Horário de Brasília',
+    filename:`palpites-${safeFileNamePart(g.home)}-x-${safeFileNamePart(g.away)}`
+  });
 }
 
 function renderPredictionsCopyArea(g){
@@ -3756,8 +3969,8 @@ function renderPredictionsCopyArea(g){
   if(!box) return;
   const canCopy = canShowPredictionsForSharing(g);
   box.innerHTML = canCopy
-    ? `<button class="btn btn-gold" type="button" onclick="copyPredictionsForWhatsApp('${g.id}')">📋 Copiar palpites para WhatsApp</button><span class="copy-note">Disponível porque os palpites já estão liberados para visualização.</span>`
-    : `<span class="copy-note">🔒 A cópia fica bloqueada enquanto os palpites dos outros participantes estiverem ocultos. Ela libera automaticamente 1 hora antes do jogo.</span>`;
+    ? `<button class="btn btn-gold" type="button" onclick="exportPredictionsImageForWhatsApp('${g.id}')">📸 Compartilhar imagem dos palpites</button><button class="btn btn-outline" type="button" onclick="copyPredictionsForWhatsApp('${g.id}')">📋 Copiar texto</button><span class="copy-note">A imagem é ideal para WhatsApp. Se o aparelho não permitir compartilhar direto, o app baixa o PNG automaticamente.</span>`
+    : `<span class="copy-note">🔒 A exportação fica bloqueada enquanto os palpites dos outros participantes estiverem ocultos. Ela libera automaticamente 1 hora antes do jogo.</span>`;
 }
 
 function openPredictionsModal(gid){
@@ -3898,13 +4111,11 @@ function upcomingGamesForView(games){
 
 function upcomingDateLabel(dateKey){
   if(!dateKey) return 'Data não definida';
-  const d = new Date(`${dateKey}T12:00:00`);
-  if(isNaN(d.getTime())) return dateKey;
-  const today = new Date();
-  const todayKey = today.toISOString().slice(0,10);
-  const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
-  const tomorrowKey = tomorrow.toISOString().slice(0,10);
-  const longDate = d.toLocaleDateString('pt-BR',{day:'numeric',month:'long'});
+  const d = parseBrasiliaDateNoon(dateKey);
+  if(!d) return dateKey;
+  const todayKey = getBrasiliaDateKey();
+  const tomorrowKey = addDaysToBrasiliaDateKey(todayKey, 1);
+  const longDate = d.toLocaleDateString('pt-BR',{day:'numeric',month:'long',timeZone:BOLAO_TIMEZONE});
   if(dateKey === todayKey) return `Hoje · ${longDate}`;
   if(dateKey === tomorrowKey) return `Amanhã · ${longDate}`;
   return longDate;
@@ -4098,22 +4309,37 @@ function rankMoveInfo(pid, currentIndex, previousPositions){
 function rankMoveHTML(pid, currentIndex, previousPositions){
   return rankMoveInfo(pid, currentIndex, previousPositions).html;
 }
-function rankingShareText(ranked, previousPositions){
-  const rows = ranked.map((p,i)=>{
+function rankingShareRows(ranked, previousPositions){
+  return ranked.map((p,i)=>{
     const move = rankMoveInfo(p.id, i, previousPositions);
     return [
       `${i+1}º`,
-      truncateShareCell(p.name, 18),
+      p.name,
       String(p.total),
       moveShareText(move)
     ];
   });
+}
+function rankingShareText(ranked, previousPositions){
+  const rows = rankingShareRows(ranked, previousPositions).map(r=>[r[0], truncateShareCell(r[1], 18), r[2], r[3]]);
   return ['🏆 Ranking atual · Bolão Copa 2026', '', shareTable(['Pos','Jogador','Pts','Mov'], rows, ['right','left','right','left'])].join('\n');
 }
 function copyRankingForWhatsApp(){
   const {ranked, previousPositions} = buildRankingData();
   if(!ranked.length){ alert('Ainda não há participantes no ranking.'); return; }
   copyTextToClipboard(rankingShareText(ranked, previousPositions), 'Ranking copiado! Agora é só colar no WhatsApp.');
+}
+async function exportRankingImageForWhatsApp(){
+  const {ranked, previousPositions} = buildRankingData();
+  if(!ranked.length){ alert('Ainda não há participantes no ranking.'); return; }
+  await exportTableImageForWhatsApp({
+    title:'Ranking atual · Bolão Copa 2026',
+    subtitle:`${ranked.length} participante${ranked.length===1?'':'s'} · Atualizado em ${formatInBrasilia(new Date(), {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} BRT`,
+    headers:['Pos','Jogador','Pts','Mov'],
+    rows:rankingShareRows(ranked, previousPositions),
+    footer:'Bolão Copa 2026 · Movimentação compara com o ranking antes da última data finalizada',
+    filename:'ranking-bolao-copa-2026'
+  });
 }
 
 function renderRanking(){
@@ -4152,7 +4378,10 @@ function renderRanking(){
   const listHTML = `<div class="section">
     <div class="rank-title-row">
       <div class="section-title">📊 Classificação</div>
-      <button class="btn btn-outline" type="button" onclick="copyRankingForWhatsApp()">📋 Copiar ranking para WhatsApp</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <button class="btn btn-outline" type="button" onclick="exportRankingImageForWhatsApp()">📸 Compartilhar imagem</button>
+        <button class="btn btn-ghost" type="button" onclick="copyRankingForWhatsApp()">📋 Copiar texto</button>
+      </div>
     </div>
     ${ranked.map((p,i)=>{
       const posC = i===0?goldC:i===1?silverC:i===2?bronzeC:'var(--muted)';
@@ -4179,10 +4408,7 @@ const FOOTBALL_API_BASE = 'https://api.football-data.org/v4';
 const FOOTBALL_COMP = 'WC';
 
 function getTodayBrazil(){
-  const p = new Intl.DateTimeFormat('en-CA',{
-    timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'
-  }).formatToParts(new Date()).reduce((a,x)=>{a[x.type]=x.value;return a},{});
-  return `${p.year}-${p.month}-${p.day}`;
+  return getBrasiliaDateKey();
 }
 
 function findLocalGameId(apiMatch){
