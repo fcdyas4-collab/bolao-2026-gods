@@ -1532,6 +1532,9 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 .rank-title-row .section-title{margin-bottom:0}
 .rank-move{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:13px;min-width:42px;text-align:center;font-weight:900;white-space:nowrap}
 .rank-up{color:var(--green)}.rank-down{color:var(--red)}.rank-same{color:var(--muted)}
+.rank-update-note{display:flex;align-items:flex-start;gap:8px;background:#f8f9fc;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.35}
+.rank-update-note strong{color:var(--text)}
+.rank-update-note .rank-update-icon{font-size:17px;line-height:1.1}
 @media(max-width:760px){.game-view-switch{margin-left:-10px;margin-right:-10px;padding:12px 10px}.upcoming-ref{margin:0 -10px 14px}.upcoming-content{padding:4px 8px 20px}.upcoming-heading h2{font-size:28px}.upcoming-date-section{margin-bottom:24px}.upcoming-date-title{margin-bottom:12px}.upcoming-date-title h3{font-size:22px}.copy-actions{display:grid}.copy-actions .btn{width:100%}.rank-title-row{align-items:stretch}.rank-title-row .btn{width:100%}}
 
 
@@ -2140,6 +2143,7 @@ function setupListeners(){
     loadMySpecial();
     renderSpecialDeadlineNote();
     renderSpecialLockUI();
+    if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
 
   db.ref('players').on('value', snap => {
@@ -2170,6 +2174,7 @@ function setupListeners(){
     renderAdminAudit();
     renderSpecialDeadlineNote();
     if(document.getElementById('tab-tabela').classList.contains('hidden')===false) renderWorldCupTable();
+    if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
 
   db.ref('predictions').on('value', snap => {
@@ -3777,8 +3782,28 @@ function saveGameFromModal(){
 
 function setActual(gid, side, val){
   if(!isAdmin) return;
-  const v = val===''?null:parseInt(val);
-  db.ref('games/'+gid+'/actual'+side.charAt(0).toUpperCase()+side.slice(1)).set(isNaN(v)?null:v);
+  const g = (state.games||{})[gid];
+  if(!g) return;
+  const field = 'actual' + side.charAt(0).toUpperCase() + side.slice(1);
+  const v = val === '' ? null : parseInt(val, 10);
+  const nextValue = isNaN(v) ? null : v;
+  const currentValue = (g[field] === undefined || g[field] === '') ? null : g[field];
+  if(String(currentValue) === String(nextValue)) return;
+
+  const previousPositions = getCurrentRankingPositions();
+  const now = Date.now();
+  const updates = {};
+  updates['games/'+gid+'/'+field] = nextValue;
+  updates['settings/rankingLastGameUpdate'] = {
+    updatedAt: now,
+    adminId: myId || 'admin',
+    adminName: myName || 'ADMIN',
+    gameId: gid,
+    gameLabel: gameLabelForRankingUpdate(g),
+    changedField: field,
+    previousPositions
+  };
+  db.ref().update(updates).catch(err=>alert('Erro ao atualizar resultado: '+err.message));
 }
 
 function removeGame(gid){
@@ -4523,28 +4548,71 @@ function sortRankingRows(rows, totalKey='total'){
     return String(a.name||'').localeCompare(String(b.name||''));
   });
 }
-function buildRankingData(){
+function buildRankingRows(){
   const players = bettingPlayers();
-  const rows = players.map(p=>{
-    const gameTotal = Object.keys(state.games).reduce((sum,gid)=>{ const pts=calcPoints(gid,p.id); return sum + (pts!==null ? pts : 0); },0);
+  return players.map(p=>{
+    const gameTotal = Object.keys(state.games||{}).reduce((sum,gid)=>{ const pts=calcPoints(gid,p.id); return sum + (pts!==null ? pts : 0); },0);
     const specialTotal = calcSpecialPoints(p.id);
     const roundPts = calcRoundPoints(p.id);
-    return {...p,total:gameTotal+specialTotal,gameTotal,specialTotal,roundPts,previousTotal:gameTotal+specialTotal-roundPts,
-      exact:Object.values(state.games).filter(g=>calcGamePointBreakdown(g.id,p.id).exact).length,
-      played:Object.values(state.games).filter(g=>{ const pr=((state.predictions||{})[g.id]||{})[p.id]; return g.actualHome!==null&&g.actualHome!==undefined&&pr&&pr.home!==''; }).length
+    return {...p,total:gameTotal+specialTotal,gameTotal,specialTotal,roundPts,
+      exact:Object.values(state.games||{}).filter(g=>calcGamePointBreakdown(g.id,p.id).exact).length,
+      played:Object.values(state.games||{}).filter(g=>{ const pr=((state.predictions||{})[g.id]||{})[p.id]; return g.actualHome!==null&&g.actualHome!==undefined&&pr&&pr.home!==''; }).length
     };
   });
-  const ranked = sortRankingRows(rows, 'total');
-  const previousRanked = sortRankingRows(rows, 'previousTotal');
-  const previousPositions = Object.fromEntries(previousRanked.map((p,i)=>[p.id,i]));
-  return {ranked, previousPositions};
+}
+function getCurrentRankingPositions(){
+  const ranked = sortRankingRows(buildRankingRows(), 'total');
+  return Object.fromEntries(ranked.map((p,i)=>[p.id,i]));
+}
+function rankingLastGameUpdate(){
+  const update = (state.settings||{}).rankingLastGameUpdate;
+  return update && typeof update === 'object' ? update : null;
+}
+function rankingPreviousPositionsFromSettings(){
+  const update = rankingLastGameUpdate();
+  return update && update.previousPositions && typeof update.previousPositions === 'object' ? update.previousPositions : {};
+}
+function gameLabelForRankingUpdate(g){
+  if(!g) return 'Jogo atualizado';
+  const home = g.home || 'A definir';
+  const away = g.away || 'A definir';
+  const dt = formatGameDateTime(g);
+  return `${home} x ${away}${dt ? ' · '+dt : ''}`;
+}
+function formatRankingUpdateDate(update){
+  if(!update || !update.updatedAt) return '';
+  const d = new Date(Number(update.updatedAt));
+  if(isNaN(d.getTime())) return '';
+  return formatInBrasilia(d, {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function rankingUpdateNoteHTML(){
+  const update = rankingLastGameUpdate();
+  const dateText = formatRankingUpdateDate(update);
+  if(!dateText){
+    return `<div class="rank-update-note"><span class="rank-update-icon">ℹ️</span><div><strong>Última atualização de resultado pelo ADMIN:</strong> ainda sem registro nesta versão. A partir do próximo resultado lançado pelo ADMIN, esta data/hora aparecerá automaticamente aqui.</div></div>`;
+  }
+  const label = update.gameLabel ? ` · ${escapeHTML(update.gameLabel)}` : '';
+  const admin = update.adminName ? ` por ${escapeHTML(update.adminName)}` : '';
+  return `<div class="rank-update-note"><span class="rank-update-icon">🕒</span><div><strong>Última atualização de resultado pelo ADMIN:</strong> ${escapeHTML(dateText)} BRT${admin}${label}</div></div>`;
+}
+function rankingUpdateShareLine(){
+  const update = rankingLastGameUpdate();
+  const dateText = formatRankingUpdateDate(update);
+  return dateText ? `Última atualização ADMIN: ${dateText} BRT${update.gameLabel ? ' · '+update.gameLabel : ''}` : 'Última atualização ADMIN: sem registro nesta versão';
+}
+function buildRankingData(){
+  const ranked = sortRankingRows(buildRankingRows(), 'total');
+  const previousPositions = rankingPreviousPositionsFromSettings();
+  return {ranked, previousPositions, lastUpdate: rankingLastGameUpdate()};
 }
 function rankMoveInfo(pid, currentIndex, previousPositions){
-  const previous = previousPositions ? previousPositions[pid] : undefined;
-  if(previous === undefined) return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
+  const previousRaw = previousPositions ? previousPositions[pid] : undefined;
+  if(previousRaw === undefined || previousRaw === null || previousRaw === '') return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
+  const previous = Number(previousRaw);
+  if(isNaN(previous)) return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
   const delta = previous - currentIndex;
   if(delta > 0) return {delta, html:`<span class="rank-move rank-up">▲ +${delta}</span>`, text:`subiu ${delta}`};
-  if(delta < 0) return {delta, html:`<span class="rank-move rank-down">▼ ${delta}</span>`, text:`caiu ${Math.abs(delta)}`};
+  if(delta < 0) return {delta, html:`<span class="rank-move rank-down">▼ -${Math.abs(delta)}</span>`, text:`caiu ${Math.abs(delta)}`};
   return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
 }
 function rankMoveHTML(pid, currentIndex, previousPositions){
@@ -4563,7 +4631,7 @@ function rankingShareRows(ranked, previousPositions){
 }
 function rankingShareText(ranked, previousPositions){
   const rows = rankingShareRows(ranked, previousPositions).map(r=>[r[0], truncateShareCell(r[1], 18), r[2], r[3]]);
-  return ['🏆 Ranking atual · Bolão Copa 2026', '', shareTable(['Pos','Jogador','Pts','Mov'], rows, ['right','left','right','left'])].join('\n');
+  return ['🏆 Ranking atual · Bolão Copa 2026', rankingUpdateShareLine(), '', shareTable(['Pos','Jogador','Pts','Mov'], rows, ['right','left','right','left'])].join('\n');
 }
 function copyRankingForWhatsApp(){
   const {ranked, previousPositions} = buildRankingData();
@@ -4575,10 +4643,10 @@ async function exportRankingImageForWhatsApp(){
   if(!ranked.length){ alert('Ainda não há participantes no ranking.'); return; }
   await exportTableImageForWhatsApp({
     title:'Ranking atual · Bolão Copa 2026',
-    subtitle:`${ranked.length} participante${ranked.length===1?'':'s'} · Atualizado em ${formatInBrasilia(new Date(), {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} BRT`,
+    subtitle:`${ranked.length} participante${ranked.length===1?'':'s'} · ${rankingUpdateShareLine()}`,
     headers:['Pos','Jogador','Pts','Mov'],
     rows:rankingShareRows(ranked, previousPositions),
-    footer:'Bolão Copa 2026 · Movimentação compara com o ranking antes da última data finalizada',
+    footer:'Bolão Copa 2026 · Movimentação compara com o ranking antes da última atualização de resultado pelo ADMIN',
     filename:'ranking-bolao-copa-2026'
   });
 }
@@ -4617,6 +4685,7 @@ function renderRanking(){
   </div>` : '';
 
   const listHTML = `<div class="section">
+    ${rankingUpdateNoteHTML()}
     <div class="rank-title-row">
       <div class="section-title">📊 Classificação</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
