@@ -1649,13 +1649,13 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('jogos')">🏟 Jogos</button>
-    <button class="tab" id="tab-btn-especiais" onclick="switchTab('especiais')">🔮 Palpites Especiais</button>
-    <button class="tab" onclick="switchTab('tabela')">📊 Tabela</button>
-    <button class="tab" onclick="switchTab('regras')">📜 Regras</button>
-    <button class="tab" id="tab-btn-config" style="display:none" onclick="switchTab('config')">⚙️ Config</button>
-    <button class="tab" onclick="switchTab('classificacao')">🏆 Ranking</button>
-    <button class="tab" onclick="switchTab('simulador')">🧮 Simulador</button>
+    <button class="tab active" data-tab="jogos" onclick="switchTab('jogos')">🏟 Jogos</button>
+    <button class="tab" id="tab-btn-especiais" data-tab="especiais" onclick="switchTab('especiais')">🔮 Palpites Especiais</button>
+    <button class="tab" data-tab="tabela" onclick="switchTab('tabela')">📊 Tabela</button>
+    <button class="tab" data-tab="regras" onclick="switchTab('regras')">📜 Regras</button>
+    <button class="tab" id="tab-btn-config" data-tab="config" style="display:none" onclick="switchTab('config')">⚙️ Config</button>
+    <button class="tab" data-tab="classificacao" onclick="switchTab('classificacao')">🏆 Ranking</button>
+    <button class="tab" data-tab="simulador" onclick="switchTab('simulador')">🧮 Simulador</button>
   </div>
 
   <!-- JOGOS -->
@@ -3531,12 +3531,21 @@ function switchTab(t){
     alert('Apenas o administrador pode acessar as configurações.');
     t = 'jogos';
   }
-  ['jogos','especiais','simulador','tabela','regras','config','classificacao'].forEach(id => {
-    document.getElementById('tab-'+id).classList.toggle('hidden', id!==t);
+
+  const tabIds = ['jogos','especiais','tabela','regras','config','classificacao','simulador'];
+
+  tabIds.forEach(id => {
+    const section = document.getElementById('tab-'+id);
+    if(section) section.classList.toggle('hidden', id !== t);
   });
-  document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active', ['jogos','especiais','simulador','tabela','regras','config','classificacao'][i]===t);
+
+  // Não use índice/posição do botão para marcar aba ativa.
+  // A ordem visual das abas pode mudar e o botão Config pode ficar oculto.
+  document.querySelectorAll('.tab').forEach(el => {
+    const tabName = el.dataset.tab || '';
+    el.classList.toggle('active', tabName === t);
   });
+
   if(t==='classificacao') renderRanking();
   if(t==='simulador') renderSimulator();
   if(t==='tabela') renderWorldCupTable();
