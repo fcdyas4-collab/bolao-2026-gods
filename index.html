@@ -1532,7 +1532,69 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 .rank-title-row .section-title{margin-bottom:0}
 .rank-move{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:13px;min-width:42px;text-align:center;font-weight:900;white-space:nowrap}
 .rank-up{color:var(--green)}.rank-down{color:var(--red)}.rank-same{color:var(--muted)}
+.rank-update-note{display:flex;align-items:flex-start;gap:8px;background:#f8f9fc;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.35}
+.rank-update-note strong{color:var(--text)}
+.rank-update-note .rank-update-icon{font-size:17px;line-height:1.1}
 @media(max-width:760px){.game-view-switch{margin-left:-10px;margin-right:-10px;padding:12px 10px}.upcoming-ref{margin:0 -10px 14px}.upcoming-content{padding:4px 8px 20px}.upcoming-heading h2{font-size:28px}.upcoming-date-section{margin-bottom:24px}.upcoming-date-title{margin-bottom:12px}.upcoming-date-title h3{font-size:22px}.copy-actions{display:grid}.copy-actions .btn{width:100%}.rank-title-row{align-items:stretch}.rank-title-row .btn{width:100%}}
+
+
+/* ===== ADMIN EXPORT: próximos jogos x status dos palpites ===== */
+.admin-export-box{margin-top:10px;padding:12px;border:1px dashed var(--border);border-radius:12px;background:#fff;display:grid;gap:8px}
+.admin-export-box .btn{width:fit-content}
+@media(max-width:760px){.admin-export-box .btn{width:100%}}
+
+
+
+/* ===== SIMULADOR ===== */
+.simulator-layout{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:28px;align-items:start;width:100%}
+.simulator-layout>*{min-width:0}
+#simulator-ranking-block{min-width:0;width:100%;max-width:380px}
+.simulator-sticky{position:sticky;top:12px;display:grid;gap:12px;min-width:0;width:100%;max-height:calc(100vh - 24px);overflow:auto;padding-right:2px}
+.simulator-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;width:100%;overflow:hidden}
+.simulator-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.simulator-title h3{font-family:'Barlow',sans-serif;font-weight:900;font-size:18px;letter-spacing:-.2px;color:#11131a;margin:0}
+.simulator-help{font-size:13px;color:var(--muted);line-height:1.35;margin-bottom:12px}
+.sim-ranking-list{display:grid;gap:7px}
+.sim-ranking-row{display:grid;grid-template-columns:42px 42px 1fr auto;gap:8px;align-items:center;background:#f8f9fc;border:1px solid #edf0f6;border-radius:10px;padding:8px 10px}
+.sim-ranking-row.leader{background:#fff9e8;border-color:rgba(245,200,66,.45)}
+.sim-rank-pos{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);line-height:1}
+.sim-rank-name{font-size:13px;font-weight:800;color:#151821;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-rank-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.sim-rank-points{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);white-space:nowrap}
+.sim-rank-delta{font-size:11px;font-weight:900;margin-left:5px}
+.sim-rank-delta.up{color:var(--green)}
+.sim-rank-delta.down{color:var(--red)}
+.sim-games{display:grid;gap:14px;min-width:0;width:100%}
+.sim-game-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(20,30,55,.04);min-width:0;width:100%;overflow:hidden}
+.sim-game-card .section-title{overflow-wrap:anywhere}
+.sim-game-card .game-status-badge{text-transform:none}
+.sim-game-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.sim-game-meta{font-size:12px;color:var(--muted);line-height:1.35;margin-top:3px}
+.sim-matchup{display:grid;grid-template-columns:1fr minmax(180px,260px) 1fr;gap:12px;align-items:center;margin:12px 0 14px}
+.sim-team{text-align:center;display:grid;gap:5px;justify-items:center;min-width:0}
+.sim-team .phase-ref-flag{margin:0 auto}
+.sim-team-code{font-family:'Barlow',sans-serif;font-size:25px;font-weight:900;line-height:1;color:#252832}
+.sim-team-name{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sim-score-box{display:grid;gap:8px;justify-items:center;text-align:center}
+.sim-score-inputs{display:flex;align-items:center;justify-content:center;gap:10px}
+.sim-score-inputs input{width:72px;height:52px;border:1px solid #dfe3eb;border-radius:0;background:#fff;color:#252832;font-size:26px;font-family:'Bebas Neue',sans-serif;text-align:center}
+.sim-score-vs{font-size:20px;font-weight:900;color:#20222b;text-transform:uppercase}
+.sim-score-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sim-mini-btn{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Barlow',sans-serif}
+.sim-mini-btn:hover{border-color:var(--gold);color:var(--gold);background:#fff5f7}
+.sim-live-score-note{font-size:12px;color:var(--muted);line-height:1.25}
+.sim-pred-table{display:grid;gap:6px;margin-top:8px}
+.sim-pred-row{display:grid;grid-template-columns:minmax(0,1fr) 72px 90px;gap:8px;align-items:center;background:#f8f9fc;border:1px solid #edf0f6;border-radius:10px;padding:9px 10px;min-width:0}
+.sim-pred-name{font-size:13px;font-weight:800;color:#151821;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-pred-pick{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#252832;text-align:center;white-space:nowrap}
+.sim-pred-pts{font-family:'Bebas Neue',sans-serif;font-size:20px;text-align:right;color:var(--muted)}
+.sim-pred-pts.some{color:var(--blue)}
+.sim-pred-pts.max{color:var(--gold)}
+.sim-pred-pts.none{color:var(--muted)}
+.sim-empty{padding:28px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--border);border-radius:14px;line-height:1.4}
+.sim-empty strong{display:block;color:#151821;font-size:18px;margin-bottom:5px}
+@media(max-width:1100px){.simulator-layout{grid-template-columns:1fr}.simulator-sticky{position:static;max-height:none;overflow:visible;padding-right:0}#simulator-ranking-block{max-width:none}.sim-matchup{grid-template-columns:1fr}.sim-pred-row{grid-template-columns:minmax(0,1fr) 64px 70px}.sim-game-head{display:grid}.sim-score-inputs input{width:66px;height:48px}}
+@media(max-width:520px){.simulator-card,.sim-game-card{padding:12px}.sim-ranking-row{grid-template-columns:30px 32px minmax(0,1fr) auto;gap:6px;padding:7px 8px}.sim-rank-points{font-size:18px}.sim-rank-name{font-size:12px}.sim-rank-sub{font-size:10px}.sim-matchup{gap:8px}.sim-team{grid-template-columns:42px 1fr;grid-template-areas:'flag code' 'flag name';text-align:left;align-items:center;justify-items:start;max-width:230px;margin:0 auto}.sim-team .phase-ref-flag{grid-area:flag}.sim-team-code{grid-area:code;font-size:22px}.sim-team-name{grid-area:name;font-size:12px}.sim-score-actions{gap:6px}.sim-mini-btn{font-size:11px;padding:5px 8px}.sim-pred-row{grid-template-columns:minmax(0,1fr) 56px 64px;gap:6px;padding:8px}.sim-pred-pick,.sim-pred-pts{font-size:18px}}
 
 </style>
 </head>
@@ -1593,6 +1655,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
     <button class="tab" onclick="switchTab('regras')">📜 Regras</button>
     <button class="tab" id="tab-btn-config" style="display:none" onclick="switchTab('config')">⚙️ Config</button>
     <button class="tab" onclick="switchTab('classificacao')">🏆 Ranking</button>
+    <button class="tab" onclick="switchTab('simulador')">🧮 Simulador</button>
   </div>
 
   <!-- JOGOS -->
@@ -1675,9 +1738,11 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
         <div class="admin-safe-actions">
           <button class="btn btn-gold" onclick="importWorldCup2026Fixtures()">📥 Cadastrar todos os jogos da Copa 2026</button>
           <button class="btn btn-outline" onclick="exportBackupJSON()">⬇️ Exportar backup JSON</button>
+          <button class="btn btn-outline" onclick="exportUpcomingPredictionStatusImageForWhatsApp()">📸 Exportar status dos próximos jogos</button>
           <button class="btn btn-danger" onclick="resetAllPredictions()">🧹 Zerar todos os palpites</button>
         </div>
         <div class="small-note">O cadastro importa os 104 jogos oficiais: 72 da fase de grupos e 32 do mata-mata. Os jogos do mata-mata entram como "A definir" para você editar depois.</div>
+        <div class="small-note">A imagem de status mostra os jogos das 3 próximas datas, cada participante, se o palpite foi realizado e quando foi atualizado. Ela não mostra o placar dos palpites.</div>
         <div class="small-note">Zerar todos os palpites remove palpites dos jogos, palpites especiais e resultados finais oficiais, mas mantém jogos, participantes e regras de pontuação.</div>
         <div class="small-note">Como admin você pode criar/editar jogos, lançar resultados, alterar pontuação e remover participantes.</div>
       </div>
@@ -1730,6 +1795,11 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
       </div>
       <div id="config-note" style="margin-top:10px;font-size:12px;color:var(--muted)">Somente o administrador pode alterar a pontuação.</div>
     </div>
+  </div>
+
+  <!-- SIMULADOR -->
+  <div id="tab-simulador" class="hidden">
+    <div id="simulator-content"></div>
   </div>
 
   <!-- TABELA -->
@@ -1842,6 +1912,7 @@ let currentGameView = 'phase';
 let openPhaseSections = {};
 let selectedPhaseRound = 'Fase de Grupos';
 let selectedPhaseGroup = 'Grupo A';
+let simulatorScores = {};
 
 
 // ─── Knockout bracket labels ─────────────────────────────────────
@@ -2123,6 +2194,7 @@ function setupListeners(){
     loadPtsUI();
     renderMySpecialScore();
     if(document.getElementById('tab-regras').classList.contains('hidden')===false) renderRules();
+    if(document.getElementById('tab-simulador') && document.getElementById('tab-simulador').classList.contains('hidden')===false) renderSimulator();
     if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
     setSyncing(false);
   });
@@ -2132,6 +2204,7 @@ function setupListeners(){
     loadMySpecial();
     renderSpecialDeadlineNote();
     renderSpecialLockUI();
+    if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
 
   db.ref('players').on('value', snap => {
@@ -2151,6 +2224,7 @@ function setupListeners(){
     updateAdminUI();
     renderPlayers();
     renderGames();
+    if(document.getElementById('tab-simulador') && document.getElementById('tab-simulador').classList.contains('hidden')===false) renderSimulator();
     renderAdminSpecialPredictions();
     renderAdminAudit();
     if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
@@ -2159,14 +2233,17 @@ function setupListeners(){
   db.ref('games').on('value', snap => {
     state.games = snap.val() || {};
     renderGames();
+    if(document.getElementById('tab-simulador') && document.getElementById('tab-simulador').classList.contains('hidden')===false) renderSimulator();
     renderAdminAudit();
     renderSpecialDeadlineNote();
     if(document.getElementById('tab-tabela').classList.contains('hidden')===false) renderWorldCupTable();
+    if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
 
   db.ref('predictions').on('value', snap => {
     state.predictions = snap.val() || {};
     renderGames();
+    if(document.getElementById('tab-simulador') && document.getElementById('tab-simulador').classList.contains('hidden')===false) renderSimulator();
     renderAdminAudit();
     if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
@@ -2185,6 +2262,7 @@ function setupListeners(){
     renderMySpecialScore();
     renderPlayers();
     renderAdminSpecialPredictions();
+    if(document.getElementById('tab-simulador') && document.getElementById('tab-simulador').classList.contains('hidden')===false) renderSimulator();
     if(document.getElementById('tab-classificacao').classList.contains('hidden')===false) renderRanking();
   });
 }
@@ -2404,6 +2482,231 @@ async function exportTableImageForWhatsApp(config){
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    alert('Imagem gerada e baixada. Agora é só enviar no WhatsApp.');
+  }catch(err){
+    alert('Não consegui gerar a imagem: ' + (err && err.message ? err.message : err));
+  }
+}
+
+
+function hasPredictionPayload(pred){
+  return !!(pred && pred.home !== undefined && pred.home !== '' && pred.away !== undefined && pred.away !== '');
+}
+function formatPredictionUpdatedAtForReport(value){
+  const n = Number(value || 0);
+  if(!n) return 'Sem registro';
+  const d = new Date(n);
+  if(isNaN(d.getTime())) return 'Sem registro';
+  return formatInBrasilia(d, {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) + ' BRT';
+}
+function upcomingGamesForAdminStatusReport(){
+  const now = new Date();
+  const all = sortedGames()
+    .map(g=>({g, start:getGameStart(g)}))
+    .filter(item=>{
+      if(hasGameResult(item.g)) return false;
+      if(!item.start) return true;
+      // Mantém jogos que ainda não começaram e também jogos recentes sem resultado,
+      // para o admin conseguir auditar a data atual durante a rodada.
+      return item.start.getTime() >= now.getTime() - (3*60*60*1000);
+    })
+    .sort((a,b)=>{
+      if(a.start && b.start) return a.start - b.start;
+      if(a.start && !b.start) return -1;
+      if(!a.start && b.start) return 1;
+      return String(a.g.date||'').localeCompare(String(b.g.date||'')) || String(a.g.time||'').localeCompare(String(b.g.time||''));
+    })
+    .map(item=>item.g);
+
+  const selectedDateKeys = [];
+  const selectedGames = [];
+  all.forEach(g=>{
+    const key = g.date || 'sem-data';
+    if(!selectedDateKeys.includes(key) && selectedDateKeys.length < 3) selectedDateKeys.push(key);
+    if(selectedDateKeys.includes(key)) selectedGames.push(g);
+  });
+  return selectedGames;
+}
+function adminStatusRowsForGame(g){
+  return bettingPlayers()
+    .slice()
+    .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')))
+    .map(p=>{
+      const pred = ((state.predictions||{})[g.id]||{})[p.id] || null;
+      const done = hasPredictionPayload(pred);
+      return {
+        user:p.name || p.login || p.id,
+        status:done ? 'PALPITE REALIZADO' : 'PALPITE NÃO REALIZADO',
+        done,
+        updatedAt:done ? formatPredictionUpdatedAtForReport(pred.updatedAt) : '-'
+      };
+    });
+}
+function groupGamesForAdminStatusReport(games){
+  return games.reduce((acc,g)=>{
+    const key = g.date || 'sem-data';
+    if(!acc[key]) acc[key] = [];
+    acc[key].push(g);
+    return acc;
+  },{});
+}
+function buildUpcomingPredictionStatusCanvas(games){
+  const players = bettingPlayers().filter(p=>p.admin !== true);
+  const grouped = groupGamesForAdminStatusReport(games);
+  const dateKeys = Object.keys(grouped).sort();
+  const width = 1400;
+  const padding = 56;
+  const topH = 164;
+  const dateH = 54;
+  const gameH = 54;
+  const tableHeaderH = 42;
+  const rowH = 38;
+  const gap = 20;
+  const footerH = 70;
+  const totalRows = games.length * Math.max(players.length, 1);
+  const height = topH + footerH + dateKeys.length * dateH + games.length * (gameH + tableHeaderH + gap) + totalRows * rowH + padding;
+  const canvas = document.createElement('canvas');
+  const scale = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,width,height);
+  ctx.fillStyle = '#ff3158';
+  ctx.fillRect(0,0,width,14);
+
+  const generatedAt = formatInBrasilia(new Date(), {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  ctx.fillStyle = '#111827';
+  ctx.font = '900 42px Arial, sans-serif';
+  ctx.fillText('Status dos palpites · Próximos jogos', padding, 76);
+  ctx.fillStyle = '#6f7787';
+  ctx.font = '700 24px Arial, sans-serif';
+  ctx.fillText(`Gerado em ${generatedAt} BRT · ${games.length} jogo${games.length===1?'':'s'} · ${players.length} participante${players.length===1?'':'s'}`, padding, 116);
+  ctx.font = '700 20px Arial, sans-serif';
+  ctx.fillText('Não mostra os placares dos palpites. Apenas status e horário do último salvamento.', padding, 146);
+
+  const tableW = width - padding*2;
+  const colW = [Math.floor(tableW*0.42), Math.floor(tableW*0.28), 0];
+  colW[2] = tableW - colW[0] - colW[1];
+  let y = topH;
+
+  dateKeys.forEach(dateKey=>{
+    const dayGames = grouped[dateKey].sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
+    ctx.fillStyle = '#f4f6fb';
+    drawRoundedRect(ctx, padding, y, tableW, dateH, 14);
+    ctx.fill();
+    ctx.fillStyle = '#111827';
+    ctx.font = '900 28px Arial, sans-serif';
+    const dateLabel = dayGames[0] ? upcomingDateLabel(dateKey) : dateKey;
+    ctx.fillText(dateLabel, padding + 22, y + 36);
+    ctx.fillStyle = '#6f7787';
+    ctx.font = '800 18px Arial, sans-serif';
+    const countText = `${dayGames.length} jogo${dayGames.length===1?'':'s'}`;
+    ctx.fillText(countText, padding + tableW - 22 - ctx.measureText(countText).width, y + 34);
+    y += dateH + 14;
+
+    dayGames.forEach(g=>{
+      const rows = adminStatusRowsForGame(g);
+      const gameTitle = `${g.home || 'A definir'} x ${g.away || 'A definir'}`;
+      const gameSub = `${formatGameDateTime(g) || 'Data não definida'}${g.stage ? ' · '+g.stage : ''}${g.matchNumber ? ' · Jogo '+g.matchNumber : ''}`;
+
+      ctx.fillStyle = '#111827';
+      ctx.font = '900 26px Arial, sans-serif';
+      ctx.fillText(imageEllipsis(ctx, gameTitle, tableW), padding, y + 28);
+      ctx.fillStyle = '#6f7787';
+      ctx.font = '700 18px Arial, sans-serif';
+      ctx.fillText(imageEllipsis(ctx, gameSub, tableW), padding, y + 52);
+      y += gameH;
+
+      ctx.fillStyle = '#294d73';
+      drawRoundedRect(ctx, padding, y, tableW, tableHeaderH, 12);
+      ctx.fill();
+      ctx.fillRect(padding, y + tableHeaderH - 12, tableW, 12);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 20px Arial, sans-serif';
+      ctx.fillText('Usuário', padding + 18, y + 28);
+      ctx.fillText('Status', padding + colW[0] + 18, y + 28);
+      ctx.fillText('Atualizado em', padding + colW[0] + colW[1] + 18, y + 28);
+      y += tableHeaderH;
+
+      const drawRows = rows.length ? rows : [{user:'Sem participantes', status:'-', done:false, updatedAt:'-'}];
+      drawRows.forEach((row, idx)=>{
+        if(idx % 2 === 0){
+          ctx.fillStyle = '#f8f9fc';
+          ctx.fillRect(padding, y, tableW, rowH);
+        }
+        ctx.strokeStyle = '#edf0f6';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(padding + tableW, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#20222b';
+        ctx.font = '800 20px Arial, sans-serif';
+        ctx.fillText(imageEllipsis(ctx, row.user, colW[0]-34), padding + 18, y + 26);
+
+        ctx.fillStyle = row.done ? '#16a36b' : '#ff3158';
+        ctx.font = '900 19px Arial, sans-serif';
+        ctx.fillText(imageEllipsis(ctx, row.status, colW[1]-34), padding + colW[0] + 18, y + 26);
+
+        ctx.fillStyle = '#20222b';
+        ctx.font = '800 19px Arial, sans-serif';
+        ctx.fillText(imageEllipsis(ctx, row.updatedAt, colW[2]-34), padding + colW[0] + colW[1] + 18, y + 26);
+        y += rowH;
+      });
+
+      y += gap;
+    });
+  });
+
+  ctx.fillStyle = '#6f7787';
+  ctx.font = '700 20px Arial, sans-serif';
+  ctx.fillText('Bolão Copa 2026 · Relatório administrativo de status dos palpites · Horário de Brasília', padding, height - 44);
+  return canvas;
+}
+async function exportUpcomingPredictionStatusImageForWhatsApp(){
+  if(!isAdmin) return alert('Apenas o administrador pode exportar esta imagem.');
+  const games = upcomingGamesForAdminStatusReport();
+  if(!games.length){
+    alert('Não encontrei próximos jogos pendentes para exportar.');
+    return;
+  }
+  try{
+    const canvas = buildUpcomingPredictionStatusCanvas(games);
+    const blob = await canvasToBlob(canvas);
+    if(!blob) throw new Error('Não foi possível gerar a imagem.');
+    const ts = new Date().toISOString().replace(/[:.]/g,'-');
+    const filename = `status-palpites-proximos-jogos-${ts}.png`;
+    const file = new File([blob], filename, {type:'image/png'});
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Status dos palpites · Próximos jogos', text:'Bolão Copa 2026'});
+      return;
+    }
+
+    if(navigator.clipboard && window.ClipboardItem && window.isSecureContext){
+      try{
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+        alert('Imagem copiada! Agora é só colar no WhatsApp.');
+        return;
+      }catch(e){
+        // Fallback para download abaixo.
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
     alert('Imagem gerada e baixada. Agora é só enviar no WhatsApp.');
   }catch(err){
@@ -3228,13 +3531,14 @@ function switchTab(t){
     alert('Apenas o administrador pode acessar as configurações.');
     t = 'jogos';
   }
-  ['jogos','especiais','tabela','regras','config','classificacao'].forEach(id => {
+  ['jogos','especiais','simulador','tabela','regras','config','classificacao'].forEach(id => {
     document.getElementById('tab-'+id).classList.toggle('hidden', id!==t);
   });
   document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active', ['jogos','especiais','tabela','regras','config','classificacao'][i]===t);
+    el.classList.toggle('active', ['jogos','especiais','simulador','tabela','regras','config','classificacao'][i]===t);
   });
   if(t==='classificacao') renderRanking();
+  if(t==='simulador') renderSimulator();
   if(t==='tabela') renderWorldCupTable();
   if(t==='regras') renderRules();
   if(t==='especiais'){ loadMySpecial(); renderSpecialDeadlineNote(); }
@@ -3544,8 +3848,28 @@ function saveGameFromModal(){
 
 function setActual(gid, side, val){
   if(!isAdmin) return;
-  const v = val===''?null:parseInt(val);
-  db.ref('games/'+gid+'/actual'+side.charAt(0).toUpperCase()+side.slice(1)).set(isNaN(v)?null:v);
+  const g = (state.games||{})[gid];
+  if(!g) return;
+  const field = 'actual' + side.charAt(0).toUpperCase() + side.slice(1);
+  const v = val === '' ? null : parseInt(val, 10);
+  const nextValue = isNaN(v) ? null : v;
+  const currentValue = (g[field] === undefined || g[field] === '') ? null : g[field];
+  if(String(currentValue) === String(nextValue)) return;
+
+  const previousPositions = getCurrentRankingPositions();
+  const now = Date.now();
+  const updates = {};
+  updates['games/'+gid+'/'+field] = nextValue;
+  updates['settings/rankingLastGameUpdate'] = {
+    updatedAt: now,
+    adminId: myId || 'admin',
+    adminName: myName || 'ADMIN',
+    gameId: gid,
+    gameLabel: gameLabelForRankingUpdate(g),
+    changedField: field,
+    previousPositions
+  };
+  db.ref().update(updates).catch(err=>alert('Erro ao atualizar resultado: '+err.message));
 }
 
 function removeGame(gid){
@@ -3606,16 +3930,16 @@ function saveGamePrediction(gid){
   const away = awayEl ? awayEl.value.trim() : '';
   const homeError = validatePredictionValue(home, 'casa');
   if(homeError){
-    alert(homeError + ' O palpite deste jogo será zerado para você preencher novamente.');
-    resetGamePredictionInputs(gid, homeEl);
-    db.ref('predictions/'+gid+'/'+myId).remove().catch(err=>alert('Erro ao zerar palpite: '+err.message));
+    alert(homeError + ' O palpite anterior foi mantido. Corrija o campo e salve novamente.');
+    setPredictionMessage(gid, 'Palpite anterior mantido. Corrija o campo e salve novamente.', 'error');
+    if(homeEl) homeEl.focus();
     return;
   }
   const awayError = validatePredictionValue(away, 'visitante');
   if(awayError){
-    alert(awayError + ' O palpite deste jogo será zerado para você preencher novamente.');
-    resetGamePredictionInputs(gid, awayEl);
-    db.ref('predictions/'+gid+'/'+myId).remove().catch(err=>alert('Erro ao zerar palpite: '+err.message));
+    alert(awayError + ' O palpite anterior foi mantido. Corrija o campo e salve novamente.');
+    setPredictionMessage(gid, 'Palpite anterior mantido. Corrija o campo e salve novamente.', 'error');
+    if(awayEl) awayEl.focus();
     return;
   }
   const path = 'predictions/'+gid+'/'+myId;
@@ -3689,14 +4013,17 @@ function renderGameCard(g){
 
   const otherPredRows = players.filter(p=>p.id !== myId).map(p=>{
     const pred = ((state.predictions||{})[g.id]||{})[p.id]||{};
+    const hasPred = hasPredictionPayload(pred);
     const pts = calcPoints(g.id, p.id);
+    const hiddenStatus = hasPred ? 'PALPITE REALIZADO' : 'PALPITE NÃO REALIZADO';
+    const displayText = showOthers ? (hasPred ? pred.home+' × '+pred.away : '? × ?') : hiddenStatus;
+    const displayColor = showOthers ? 'var(--muted)' : (hasPred ? 'var(--green)' : 'var(--red)');
+    const displayFont = showOthers ? "font-family:'Bebas Neue',sans-serif;font-size:17px;font-weight:400;min-width:80px" : "font-family:'Barlow',sans-serif;font-size:11px;font-weight:900;min-width:150px;letter-spacing:.2px";
     return `<div class="pred-row">
       <div class="avatar col-${p.colorIdx||0}" style="width:26px;height:26px;font-size:11px">${initials(p.name)}</div>
       <span style="font-size:13px;flex:1">${escapeHTML(p.name)}</span>
       <div class="pred-inputs">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:17px;min-width:80px;text-align:center;color:var(--muted)">
-          ${showOthers ? (pred.home!==undefined&&pred.home!==''?pred.home+' × '+pred.away:'? × ?') : '🔒 oculto'}
-        </span>
+        <span style="${displayFont};text-align:center;color:${displayColor}">${displayText}</span>
       </div>
       <span class="pts-badge ${pts===null?'pts-0':pts>=state.pts.exact?'pts-max':pts>0?'pts-some':'pts-0'}">${pts===null?'-':pts}</span>
     </div>`;
@@ -3728,7 +4055,7 @@ function renderGameCard(g){
         : '<span style="color:var(--muted);font-size:12px">Aguardando resultado</span>'}
     </div>
     ${g.venue ? `<div class="small-note">📍 ${escapeHTML(g.venue)}</div>` : ''}
-    <div class="small-note">${predictionDeadlineNote(g)} Use apenas números inteiros de 0 a 20. ${showOthers ? '' : 'Os palpites dos outros participantes ficam ocultos até 1 hora antes do jogo.'}</div>
+    <div class="small-note">${predictionDeadlineNote(g)} Use apenas números inteiros de 0 a 20. ${showOthers ? '' : 'Os placares dos outros participantes ficam ocultos até 1 hora antes do jogo; antes disso você vê quem já realizou o palpite.'}</div>
     ${currentPlayerIsBetting ? `<div class="preds-label" style="margin-top:8px">MEU PALPITE ${myPredictionSaved?'· ✅ SALVO':'· NÃO SALVO'} ${myPts!==null?`· ${myPts} pts`:''}</div>${myPredictionBox}` : '<div class="small-note" style="margin-top:8px">Admin não participa dos palpites.</div>'}
     ${players.length > (currentPlayerIsBetting ? 1 : 0)
       ? `<button class="btn btn-outline pred-toggle" onclick="togglePredictions('${g.id}')">${predOpen?'Ocultar palpites dos outros':'Ver palpites'} (${players.length-(currentPlayerIsBetting?1:0)})</button>${predOpen?`<div class="preds-label" style="margin-top:8px">PALPITES</div>${otherPredRows}`:''}`
@@ -3903,15 +4230,20 @@ function predictionRowsForModal(g){
   if(!players.length) return '<div class="pred-modal-empty">Nenhum participante nos palpites.</div>';
   return players.map(p=>{
     const pred = ((state.predictions||{})[g.id]||{})[p.id]||{};
+    const hasPred = hasPredictionPayload(pred);
     const pts = calcPoints(g.id, p.id);
     const isMe = p.id === myId;
     const predText = showOthers
-      ? (pred.home!==undefined && pred.home!=='' && pred.away!==undefined && pred.away!=='' ? pred.home+' × '+pred.away : '? × ?')
-      : (isMe && pred.home!==undefined && pred.home!=='' && pred.away!==undefined && pred.away!=='' ? pred.home+' × '+pred.away : '🔒 oculto');
+      ? (hasPred ? pred.home+' × '+pred.away : '? × ?')
+      : (hasPred ? 'PALPITE REALIZADO' : 'PALPITE NÃO REALIZADO');
+    const predColor = showOthers ? '#20222b' : (hasPred ? 'var(--green)' : 'var(--red)');
+    const predStyle = showOthers
+      ? "font-family:'Bebas Neue',sans-serif;font-size:20px;min-width:72px;font-weight:400"
+      : "font-family:'Barlow',sans-serif;font-size:11px;min-width:154px;font-weight:900;letter-spacing:.2px";
     return `<div class="pred-row">
       <div class="avatar col-${p.colorIdx||0}" style="width:28px;height:28px;font-size:11px">${initials(p.name)}</div>
       <span style="font-size:13px;flex:1;font-weight:${isMe?'700':'500'}">${escapeHTML(p.name)}${isMe?' <span style="font-size:10px;color:var(--muted)">(você)</span>':''}</span>
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;min-width:72px;text-align:center;color:#20222b">${predText}</span>
+      <span style="${predStyle};text-align:center;color:${predColor}">${predText}</span>
       <span class="pts-badge ${pts===null?'pts-0':pts>=state.pts.exact?'pts-max':pts>0?'pts-some':'pts-0'}">${pts===null?'-':pts}</span>
     </div>`;
   }).join('');
@@ -3981,7 +4313,7 @@ function openPredictionsModal(gid){
   const subtitle = document.getElementById('predictions-modal-subtitle');
   const content = document.getElementById('predictions-modal-content');
   title.textContent = 'Palpites do jogo';
-  subtitle.textContent = `${g.home} x ${g.away} · ${formatGameDateTime(g) || 'sem data'}`;
+  subtitle.textContent = `${g.home} x ${g.away} · ${formatGameDateTime(g) || 'sem data'}${canShowPredictionsForSharing(g) ? '' : ' · antes da trava: apenas status'}`;
   content.innerHTML = predictionRowsForModal(g);
   renderPredictionsCopyArea(g);
   modal.classList.add('active');
@@ -4180,6 +4512,236 @@ function setGameViewButtonsState(){
   if(upcomingBtn) upcomingBtn.classList.toggle('active', currentGameView === 'upcoming');
 }
 
+
+// ─── Simulator ───────────────────────────────────────────────────
+function isSimulatorVisible(){
+  const tab = document.getElementById('tab-simulador');
+  return !!tab && tab.classList.contains('hidden') === false;
+}
+function simulatorGameStatus(g){
+  const status = getGameDisplayStatus(g);
+  const api = liveAPIData[g.id];
+  const start = getGameStart(g);
+  const now = new Date();
+  const elapsedMin = start ? (now.getTime() - start.getTime()) / 60000 : null;
+  // No Simulador, quando o jogo já passou do tempo normal estimado e ainda não há resultado oficial do ADMIN,
+  // ele continua aberto para simulação, mas deixa de aparecer como "Em andamento".
+  if((api && api.status === 'FINISHED') || (elapsedMin !== null && elapsedMin >= 120)){
+    return {status:'finished-open',label:'Finalizado - Em aberto',css:'game-status-finished'};
+  }
+  if(status.status === 'live' || status.status === 'halftime') return status;
+  if(start && start <= now) return {status:'pending-admin',label:'Aguardando resultado do ADMIN',css:'game-status-halftime'};
+  return status;
+}
+function simulatorGames(){
+  const now = new Date();
+  return sortedGames().filter(g=>{
+    if(hasGameResult(g)) return false;
+    const status = getGameDisplayStatus(g);
+    if(['live','halftime'].includes(status.status)) return true;
+    const api = liveAPIData[g.id];
+    if(api && ['IN_PLAY','PAUSED','FINISHED','SUSPENDED'].includes(api.status)) return true;
+    const start = getGameStart(g);
+    return !!start && start.getTime() <= now.getTime();
+  }).sort((a,b)=>{
+    const sa = getGameStart(a), sb = getGameStart(b);
+    if(sa && sb) return sa - sb;
+    if(sa && !sb) return -1;
+    if(!sa && sb) return 1;
+    return String(a.stage||'').localeCompare(String(b.stage||''));
+  });
+}
+function getSimulatorScore(gid){
+  const saved = simulatorScores[gid];
+  if(saved) return {home:saved.home ?? '', away:saved.away ?? '', source:'manual'};
+  const live = getAPIScore(gid);
+  if(live) return {home:live.home, away:live.away, source:'api'};
+  return {home:'', away:'', source:'empty'};
+}
+function normalizeSimulatorScoreValue(value){
+  if(value === '' || value === null || value === undefined) return '';
+  const n = parseInt(value, 10);
+  if(Number.isNaN(n)) return '';
+  return Math.max(0, Math.min(20, n));
+}
+function simulatorScoreComplete(score){
+  return score && score.home !== '' && score.home !== undefined && score.away !== '' && score.away !== undefined;
+}
+function updateSimulatorScore(gid, side, value){
+  if(!simulatorScores[gid]) simulatorScores[gid] = {home:'', away:''};
+  simulatorScores[gid][side] = normalizeSimulatorScoreValue(value);
+  refreshSimulatorComputedAreas(gid);
+}
+function clearSimulatorScore(gid){
+  delete simulatorScores[gid];
+  renderSimulator();
+}
+function useLiveScoreInSimulator(gid){
+  const live = getAPIScore(gid);
+  if(!live){ alert('Ainda não há placar ao vivo disponível para este jogo.'); return; }
+  simulatorScores[gid] = {home:live.home, away:live.away};
+  renderSimulator();
+}
+function calcSimulatorBreakdown(g, pid, simHome, simAway){
+  const empty = {total:0, exact:false, winner:false, homeGoals:false, awayGoals:false, diff:false, scored:false};
+  const pred = ((state.predictions||{})[g.id]||{})[pid];
+  if(!pred || pred.home === '' || pred.home === undefined || pred.away === '' || pred.away === undefined) return {...empty};
+  const ph = parseInt(pred.home, 10), pa = parseInt(pred.away, 10);
+  const ah = parseInt(simHome, 10), aa = parseInt(simAway, 10);
+  if([ph,pa,ah,aa].some(Number.isNaN)) return {...empty};
+  const exact = ph === ah && pa === aa;
+  const winner = (ah > aa && ph > pa) || (ah < aa && ph < pa) || (ah === aa && ph === pa);
+  const homeGoals = ph === ah;
+  const awayGoals = pa === aa;
+  const diff = (ah-aa) === (ph-pa);
+  const total =
+    (exact ? Number(state.pts.exact||0) : 0) +
+    (winner ? Number(state.pts.winner||0) : 0) +
+    (homeGoals ? Number(state.pts.goalsTeam||0) : 0) +
+    (awayGoals ? Number(state.pts.goalsTeam||0) : 0) +
+    (diff ? Number(state.pts.diff||0) : 0);
+  return {total, exact, winner, homeGoals, awayGoals, diff, scored:true};
+}
+function simulatorPointsForGame(g, pid){
+  const score = getSimulatorScore(g.id);
+  if(!simulatorScoreComplete(score)) return null;
+  return calcSimulatorBreakdown(g, pid, score.home, score.away);
+}
+function buildSimulatorRankingRows(games=simulatorGames()){
+  const rows = buildRankingRows();
+  return rows.map(p=>{
+    const simGames = games.reduce((sum,g)=>{
+      const b = simulatorPointsForGame(g, p.id);
+      return sum + (b && b.scored ? b.total : 0);
+    },0);
+    return {...p, simGames, simTotal:(p.total||0)+simGames};
+  });
+}
+function miniRankingHTML(rows, totalKey='total', extraKey=null, movePositions=null){
+  const ranked = sortRankingRows(rows, totalKey);
+  if(!ranked.length) return '<div class="sim-empty">Nenhum participante cadastrado.</div>';
+  return `<div class="sim-ranking-list">${ranked.map((p,i)=>{
+    const extra = extraKey ? Number(p[extraKey]||0) : 0;
+    const extraHTML = extraKey && extra > 0 ? `<span class="sim-rank-delta up">+${extra}</span>` : '';
+    const moveHTML = movePositions ? rankMoveHTML(p.id, i, movePositions) : '';
+    return `<div class="sim-ranking-row ${i===0?'leader':''}">
+      ${moveHTML}<div class="sim-rank-pos">${i+1}º</div>
+      <div><div class="sim-rank-name">${escapeHTML(p.name)}</div><div class="sim-rank-sub">${p.played||0} jogos · ${p.exact||0} exatos</div></div>
+      <div class="sim-rank-points">${p[totalKey]||0} pts${extraHTML}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function simulatorRankingHTML(){
+  const games = simulatorGames();
+  const simRows = buildSimulatorRankingRows(games);
+  const currentPositions = getCurrentRankingPositions();
+  return `<div class="simulator-sticky">
+    <div class="simulator-card">
+      <div class="simulator-title"><h3>🧮 Ranking simulado</h3></div>
+      <div class="simulator-help">Ranking dinâmico: soma o ranking atual com os pontos dos placares digitados abaixo.</div>
+      ${miniRankingHTML(simRows, 'simTotal', 'simGames', currentPositions)}
+    </div>
+  </div>`;
+}
+function simulatorPredictionRows(g){
+  const score = getSimulatorScore(g.id);
+  const complete = simulatorScoreComplete(score);
+  const players = bettingPlayers();
+  if(!players.length) return '<div class="sim-empty">Nenhum participante cadastrado.</div>';
+  return `<div class="sim-pred-table">${players.map(p=>{
+    const pred = ((state.predictions||{})[g.id]||{})[p.id] || {};
+    const hasPred = hasPredictionPayload(pred);
+    const b = complete ? calcSimulatorBreakdown(g, p.id, score.home, score.away) : null;
+    const pts = b && b.scored ? b.total : 0;
+    const maxPossible = Number(state.pts.exact||0) + Number(state.pts.winner||0) + (Number(state.pts.goalsTeam||0)*2) + Number(state.pts.diff||0);
+    const ptsClass = !complete || !hasPred || pts===0 ? 'none' : (pts>=maxPossible ? 'max' : 'some');
+    return `<div class="sim-pred-row">
+      <div class="sim-pred-name">${escapeHTML(p.name)}</div>
+      <div class="sim-pred-pick">${hasPred ? `${pred.home} × ${pred.away}` : '—'}</div>
+      <div class="sim-pred-pts ${ptsClass}" id="sim-pts-${g.id}-${p.id}">${complete && hasPred ? `${pts} pts` : '—'}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function updateSimulatorPredictionPoints(gid){
+  const g = (state.games||{})[gid];
+  if(!g) return;
+  const score = getSimulatorScore(gid);
+  const complete = simulatorScoreComplete(score);
+  const maxPossible = Number(state.pts.exact||0) + Number(state.pts.winner||0) + (Number(state.pts.goalsTeam||0)*2) + Number(state.pts.diff||0);
+  bettingPlayers().forEach(p=>{
+    const el = document.getElementById(`sim-pts-${gid}-${p.id}`);
+    if(!el) return;
+    const pred = ((state.predictions||{})[gid]||{})[p.id] || {};
+    const hasPred = hasPredictionPayload(pred);
+    const b = complete ? calcSimulatorBreakdown(g, p.id, score.home, score.away) : null;
+    const pts = b && b.scored ? b.total : 0;
+    el.textContent = complete && hasPred ? `${pts} pts` : '—';
+    el.className = `sim-pred-pts ${!complete || !hasPred || pts===0 ? 'none' : (pts>=maxPossible ? 'max' : 'some')}`;
+  });
+}
+function refreshSimulatorComputedAreas(gid){
+  const ranking = document.getElementById('simulator-ranking-block');
+  if(ranking) ranking.innerHTML = simulatorRankingHTML();
+  updateSimulatorPredictionPoints(gid);
+}
+function simulatorGameCard(g){
+  const score = getSimulatorScore(g.id);
+  const live = getAPIScore(g.id);
+  const status = simulatorGameStatus(g);
+  const liveNote = live ? `Placar da API: ${live.home} × ${live.away}${live.minute ? ` · ${live.minute}'` : ''}` : 'Digite o placar atual ou o placar final que você quer simular.';
+  return `<div class="sim-game-card">
+    <div class="sim-game-head">
+      <div>
+        <span class="game-status-badge ${status.css}">${status.label || 'SIMULAÇÃO'}</span>
+        <div class="section-title" style="margin:6px 0 0;font-size:22px">${escapeHTML(g.home || 'A definir')} x ${escapeHTML(g.away || 'A definir')}</div>
+        <div class="sim-game-meta">${escapeHTML(stageDescriptionForGame(g))} · ${escapeHTML(formatGameDateTime(g) || 'Data não definida')} · Horário de Brasília</div>
+      </div>
+      <button class="sim-mini-btn" type="button" onclick="clearSimulatorScore('${g.id}')">Limpar</button>
+    </div>
+    <div class="sim-matchup">
+      <div class="sim-team">
+        ${gameFlagHTML(g,'home','phase-ref-flag')}
+        <div class="sim-team-code">${escapeHTML(displayTeamCode(g,'home'))}</div>
+        <div class="sim-team-name">${escapeHTML(displayTeamName(g,'home'))}</div>
+      </div>
+      <div class="sim-score-box">
+        <div class="sim-score-inputs">
+          <input id="sim-home-${g.id}" type="number" min="0" max="20" step="1" inputmode="numeric" value="${escapeHTML(score.home)}" placeholder="-" oninput="updateSimulatorScore('${g.id}','home',this.value)">
+          <span class="sim-score-vs">vs</span>
+          <input id="sim-away-${g.id}" type="number" min="0" max="20" step="1" inputmode="numeric" value="${escapeHTML(score.away)}" placeholder="-" oninput="updateSimulatorScore('${g.id}','away',this.value)">
+        </div>
+        <div class="sim-score-actions">
+          ${live ? `<button class="sim-mini-btn" type="button" onclick="useLiveScoreInSimulator('${g.id}')">Usar placar ao vivo</button>` : ''}
+        </div>
+        <div class="sim-live-score-note">${escapeHTML(liveNote)}</div>
+      </div>
+      <div class="sim-team">
+        ${gameFlagHTML(g,'away','phase-ref-flag')}
+        <div class="sim-team-code">${escapeHTML(displayTeamCode(g,'away'))}</div>
+        <div class="sim-team-name">${escapeHTML(displayTeamName(g,'away'))}</div>
+      </div>
+    </div>
+    <div class="preds-label">PALPITES DO JOGO</div>
+    ${simulatorPredictionRows(g)}
+  </div>`;
+}
+function renderSimulator(){
+  const el = document.getElementById('simulator-content');
+  if(!el) return;
+  const games = simulatorGames();
+  const gameHTML = games.length
+    ? `<div class="sim-games">${games.map(simulatorGameCard).join('')}</div>`
+    : `<div class="sim-empty"><strong>Nenhum jogo para simular agora</strong>O Simulador mostra jogos que já começaram e ainda não têm resultado oficial lançado pelo ADMIN. Quando um jogo começar, ele aparece aqui; quando o ADMIN lançar o resultado, ele sai automaticamente.</div>`;
+  el.innerHTML = `<div class="section" style="margin-bottom:14px">
+    <div class="section-title">🧮 Simulador</div>
+    <div class="notice">Use esta aba para controlar a ansiedade: digite o placar parcial ou final dos jogos em andamento e veja como o ranking ficaria.</div>
+  </div>
+  <div class="simulator-layout">
+    <div id="simulator-ranking-block">${simulatorRankingHTML()}</div>
+    <div>${gameHTML}</div>
+  </div>`;
+}
+
 // ─── World Cup Table ─────────────────────────────────────────────
 function hasGameResult(g){ return g.actualHome!==null && g.actualHome!==undefined && g.actualAway!==null && g.actualAway!==undefined; }
 function ensureTeam(stats, team){
@@ -4232,7 +4794,7 @@ function renderRules(){
   el.innerHTML = `<div class="section"><div class="section-title">📜 Regras do Bolão</div><div class="rules-list">
     <div><strong>1. Palpites dos jogos:</strong> cada participante pode palpitar o placar até 1 hora antes do horário configurado para o jogo, salvo se o admin bloquear/desbloquear manualmente no editar jogo.</div>
     <div><strong>2. Limite dos placares:</strong> os palpites dos jogos aceitam apenas números de 0 a 20 para cada seleção.</div>
-    <div><strong>3. Visibilidade dos palpites:</strong> os palpites dos outros participantes ficam ocultos até o início do jogo.</div>
+    <div><strong>3. Visibilidade dos palpites:</strong> os placares dos palpites dos outros participantes ficam ocultos até a trava do jogo; antes disso aparece o status de quem já realizou o palpite.</div>
     <div><strong>4. Pontuação cumulativa:</strong> em cada jogo, os pontos acumulam entre placar exato, vencedor/empate, gols exatos de cada time e diferença de gols.</div>
     <div><strong>5. Palpites especiais:</strong> campeão, vice, terceiro lugar, artilheiro, melhor jogador e melhor goleiro. Eles só pontuam quando o admin preencher os resultados oficiais.</div>
     <div><strong>6. Formato Copa 2026:</strong> 48 seleções, 12 grupos de 4, fase de 32, oitavas, quartas, semifinais, disputa de 3º lugar e final.</div>
@@ -4282,28 +4844,71 @@ function sortRankingRows(rows, totalKey='total'){
     return String(a.name||'').localeCompare(String(b.name||''));
   });
 }
-function buildRankingData(){
+function buildRankingRows(){
   const players = bettingPlayers();
-  const rows = players.map(p=>{
-    const gameTotal = Object.keys(state.games).reduce((sum,gid)=>{ const pts=calcPoints(gid,p.id); return sum + (pts!==null ? pts : 0); },0);
+  return players.map(p=>{
+    const gameTotal = Object.keys(state.games||{}).reduce((sum,gid)=>{ const pts=calcPoints(gid,p.id); return sum + (pts!==null ? pts : 0); },0);
     const specialTotal = calcSpecialPoints(p.id);
     const roundPts = calcRoundPoints(p.id);
-    return {...p,total:gameTotal+specialTotal,gameTotal,specialTotal,roundPts,previousTotal:gameTotal+specialTotal-roundPts,
-      exact:Object.values(state.games).filter(g=>calcGamePointBreakdown(g.id,p.id).exact).length,
-      played:Object.values(state.games).filter(g=>{ const pr=((state.predictions||{})[g.id]||{})[p.id]; return g.actualHome!==null&&g.actualHome!==undefined&&pr&&pr.home!==''; }).length
+    return {...p,total:gameTotal+specialTotal,gameTotal,specialTotal,roundPts,
+      exact:Object.values(state.games||{}).filter(g=>calcGamePointBreakdown(g.id,p.id).exact).length,
+      played:Object.values(state.games||{}).filter(g=>{ const pr=((state.predictions||{})[g.id]||{})[p.id]; return g.actualHome!==null&&g.actualHome!==undefined&&pr&&pr.home!==''; }).length
     };
   });
-  const ranked = sortRankingRows(rows, 'total');
-  const previousRanked = sortRankingRows(rows, 'previousTotal');
-  const previousPositions = Object.fromEntries(previousRanked.map((p,i)=>[p.id,i]));
-  return {ranked, previousPositions};
+}
+function getCurrentRankingPositions(){
+  const ranked = sortRankingRows(buildRankingRows(), 'total');
+  return Object.fromEntries(ranked.map((p,i)=>[p.id,i]));
+}
+function rankingLastGameUpdate(){
+  const update = (state.settings||{}).rankingLastGameUpdate;
+  return update && typeof update === 'object' ? update : null;
+}
+function rankingPreviousPositionsFromSettings(){
+  const update = rankingLastGameUpdate();
+  return update && update.previousPositions && typeof update.previousPositions === 'object' ? update.previousPositions : {};
+}
+function gameLabelForRankingUpdate(g){
+  if(!g) return 'Jogo atualizado';
+  const home = g.home || 'A definir';
+  const away = g.away || 'A definir';
+  const dt = formatGameDateTime(g);
+  return `${home} x ${away}${dt ? ' · '+dt : ''}`;
+}
+function formatRankingUpdateDate(update){
+  if(!update || !update.updatedAt) return '';
+  const d = new Date(Number(update.updatedAt));
+  if(isNaN(d.getTime())) return '';
+  return formatInBrasilia(d, {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function rankingUpdateNoteHTML(){
+  const update = rankingLastGameUpdate();
+  const dateText = formatRankingUpdateDate(update);
+  if(!dateText){
+    return `<div class="rank-update-note"><span class="rank-update-icon">ℹ️</span><div><strong>Última atualização de resultado pelo ADMIN:</strong> ainda sem registro nesta versão. A partir do próximo resultado lançado pelo ADMIN, esta data/hora aparecerá automaticamente aqui.</div></div>`;
+  }
+  const label = update.gameLabel ? ` · ${escapeHTML(update.gameLabel)}` : '';
+  const admin = update.adminName ? ` por ${escapeHTML(update.adminName)}` : '';
+  return `<div class="rank-update-note"><span class="rank-update-icon">🕒</span><div><strong>Última atualização de resultado pelo ADMIN:</strong> ${escapeHTML(dateText)} BRT${admin}${label}</div></div>`;
+}
+function rankingUpdateShareLine(){
+  const update = rankingLastGameUpdate();
+  const dateText = formatRankingUpdateDate(update);
+  return dateText ? `Última atualização ADMIN: ${dateText} BRT${update.gameLabel ? ' · '+update.gameLabel : ''}` : 'Última atualização ADMIN: sem registro nesta versão';
+}
+function buildRankingData(){
+  const ranked = sortRankingRows(buildRankingRows(), 'total');
+  const previousPositions = rankingPreviousPositionsFromSettings();
+  return {ranked, previousPositions, lastUpdate: rankingLastGameUpdate()};
 }
 function rankMoveInfo(pid, currentIndex, previousPositions){
-  const previous = previousPositions ? previousPositions[pid] : undefined;
-  if(previous === undefined) return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
+  const previousRaw = previousPositions ? previousPositions[pid] : undefined;
+  if(previousRaw === undefined || previousRaw === null || previousRaw === '') return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
+  const previous = Number(previousRaw);
+  if(isNaN(previous)) return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
   const delta = previous - currentIndex;
   if(delta > 0) return {delta, html:`<span class="rank-move rank-up">▲ +${delta}</span>`, text:`subiu ${delta}`};
-  if(delta < 0) return {delta, html:`<span class="rank-move rank-down">▼ ${delta}</span>`, text:`caiu ${Math.abs(delta)}`};
+  if(delta < 0) return {delta, html:`<span class="rank-move rank-down">▼ -${Math.abs(delta)}</span>`, text:`caiu ${Math.abs(delta)}`};
   return {delta:0, html:'<span class="rank-move rank-same">•</span>', text:'sem mudança'};
 }
 function rankMoveHTML(pid, currentIndex, previousPositions){
@@ -4322,7 +4927,7 @@ function rankingShareRows(ranked, previousPositions){
 }
 function rankingShareText(ranked, previousPositions){
   const rows = rankingShareRows(ranked, previousPositions).map(r=>[r[0], truncateShareCell(r[1], 18), r[2], r[3]]);
-  return ['🏆 Ranking atual · Bolão Copa 2026', '', shareTable(['Pos','Jogador','Pts','Mov'], rows, ['right','left','right','left'])].join('\n');
+  return ['🏆 Ranking atual · Bolão Copa 2026', rankingUpdateShareLine(), '', shareTable(['Pos','Jogador','Pts','Mov'], rows, ['right','left','right','left'])].join('\n');
 }
 function copyRankingForWhatsApp(){
   const {ranked, previousPositions} = buildRankingData();
@@ -4334,10 +4939,10 @@ async function exportRankingImageForWhatsApp(){
   if(!ranked.length){ alert('Ainda não há participantes no ranking.'); return; }
   await exportTableImageForWhatsApp({
     title:'Ranking atual · Bolão Copa 2026',
-    subtitle:`${ranked.length} participante${ranked.length===1?'':'s'} · Atualizado em ${formatInBrasilia(new Date(), {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} BRT`,
+    subtitle:`${ranked.length} participante${ranked.length===1?'':'s'} · ${rankingUpdateShareLine()}`,
     headers:['Pos','Jogador','Pts','Mov'],
     rows:rankingShareRows(ranked, previousPositions),
-    footer:'Bolão Copa 2026 · Movimentação compara com o ranking antes da última data finalizada',
+    footer:'Bolão Copa 2026 · Movimentação compara com o ranking antes da última atualização de resultado pelo ADMIN',
     filename:'ranking-bolao-copa-2026'
   });
 }
@@ -4376,6 +4981,7 @@ function renderRanking(){
   </div>` : '';
 
   const listHTML = `<div class="section">
+    ${rankingUpdateNoteHTML()}
     <div class="rank-title-row">
       <div class="section-title">📊 Classificação</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
@@ -4536,14 +5142,8 @@ async function updateFromAPI(){
         lastUpdated: new Date()
       };
 
-      // Auto-populate finished games into Firebase
-      if(m.status === 'FINISHED' && ft.home != null && ft.away != null){
-        const g = state.games[gid];
-        if(g && (g.actualHome == null || g.actualHome === undefined)){
-          fbUpdates['games/'+gid+'/actualHome'] = ft.home;
-          fbUpdates['games/'+gid+'/actualAway'] = ft.away;
-        }
-      }
+      // Resultado oficial continua sendo responsabilidade do ADMIN.
+      // A API pode alimentar o placar ao vivo e o Simulador, mas não grava actualHome/actualAway no Firebase.
 
       // Auto-update knockout team names from API if local game still has "A definir"
       if(m.homeTeam?.name && m.awayTeam?.name){
@@ -4566,6 +5166,7 @@ async function updateFromAPI(){
     lastAPIFetchTime = new Date();
     renderLiveTicker();
     renderGames();
+    if(isSimulatorVisible()) renderSimulator();
     updateAPIStatusUI();
   }catch(err){
     if(err.message === 'CORS'){
