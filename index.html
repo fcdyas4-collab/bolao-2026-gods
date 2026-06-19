@@ -602,6 +602,32 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 .dash-game-line:first-child{border-top:none;padding-top:0}
 .dash-game-title{font-size:13px;font-weight:900;color:#151821;line-height:1.25}
 .dash-game-meta{font-size:11px;color:var(--muted);line-height:1.25}
+
+.dash-game-phase-link{
+  appearance:none;
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  color:var(--muted);
+  font:inherit;
+  line-height:inherit;
+  text-align:left;
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:2px;
+}
+.dash-game-phase-link:hover,
+.dash-game-phase-link:focus-visible{
+  color:var(--gold);
+  outline:none;
+}
+.phase-ref-match.phase-ref-match-focus{
+  border-color:var(--gold)!important;
+  box-shadow:0 0 0 4px rgba(255,49,88,.13)!important;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
 .dash-status{font-size:11px;font-weight:900;line-height:1.25}
 .dash-status.saved{color:var(--green)}
 .dash-status.pending{color:var(--red)}
@@ -1596,6 +1622,535 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 @media(max-width:1100px){.simulator-layout{grid-template-columns:1fr}.simulator-sticky{position:static;max-height:none;overflow:visible;padding-right:0}#simulator-ranking-block{max-width:none}.sim-matchup{grid-template-columns:1fr}.sim-pred-row{grid-template-columns:minmax(0,1fr) 64px 70px}.sim-game-head{display:grid}.sim-score-inputs input{width:66px;height:48px}}
 @media(max-width:520px){.simulator-card,.sim-game-card{padding:12px}.sim-ranking-row{grid-template-columns:30px 32px minmax(0,1fr) auto;gap:6px;padding:7px 8px}.sim-rank-points{font-size:18px}.sim-rank-name{font-size:12px}.sim-rank-sub{font-size:10px}.sim-matchup{gap:8px}.sim-team{grid-template-columns:42px 1fr;grid-template-areas:'flag code' 'flag name';text-align:left;align-items:center;justify-items:start;max-width:230px;margin:0 auto}.sim-team .phase-ref-flag{grid-area:flag}.sim-team-code{grid-area:code;font-size:22px}.sim-team-name{grid-area:name;font-size:12px}.sim-score-actions{gap:6px}.sim-mini-btn{font-size:11px;padding:5px 8px}.sim-pred-row{grid-template-columns:minmax(0,1fr) 56px 64px;gap:6px;padding:8px}.sim-pred-pick,.sim-pred-pts{font-size:18px}}
 
+
+
+/* ===== TOP STATUS DASHBOARD ABOVE MAIN MENU ===== */
+.top-status-dashboard{
+  margin:4px 0 18px;
+}
+.top-status-dashboard:empty{display:none}
+.top-status-dashboard .phase-mini-dashboard{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:0;
+}
+.top-status-dashboard .dash-card{
+  background:#f8f9fc;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  width:100%;
+  min-width:0;
+  overflow:hidden;
+}
+.top-status-dashboard .dash-card-title{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  color:var(--muted);
+  font-weight:900;
+  margin-bottom:8px;
+}
+.top-status-dashboard .dash-upcoming-body{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:16px;
+  align-items:start;
+  min-width:0;
+}
+.top-status-dashboard .dash-card-main{
+  font-size:26px;
+  line-height:1;
+  font-weight:900;
+  color:#10131a;
+  min-width:26px;
+}
+.top-status-dashboard .dash-card-sub{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.35;
+  min-width:0;
+}
+.top-status-dashboard .dash-upcoming-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;
+  margin-top:0;
+}
+.top-status-dashboard .dash-game-line{
+  background:#fff;
+  border:1px solid #edf0f6;
+  border-radius:10px;
+  padding:10px;
+  display:grid;
+  gap:3px;
+  min-width:0;
+}
+.top-status-dashboard .dash-game-line:first-child{
+  border-top:1px solid #edf0f6;
+  padding-top:10px;
+}
+.top-status-dashboard .dash-game-title{
+  font-size:13px;
+  font-weight:900;
+  color:#151821;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+}
+.top-status-dashboard .dash-game-meta{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.25;
+}
+.top-status-dashboard .dash-card-missing{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:14px;
+  row-gap:4px;
+  align-items:center;
+}
+.top-status-dashboard .dash-card-missing .dash-card-title{
+  grid-column:1 / -1;
+  margin-bottom:0;
+}
+.top-status-dashboard .dash-empty-line{
+  color:var(--muted);
+  font-size:12px;
+}
+@media(max-width:760px){
+  .top-status-dashboard{
+    margin:2px 0 14px;
+  }
+  .top-status-dashboard .phase-mini-dashboard{
+    gap:8px;
+  }
+  .top-status-dashboard .dash-card{
+    padding:11px;
+    border-radius:12px;
+  }
+  .top-status-dashboard .dash-upcoming-body{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .top-status-dashboard .dash-card-main{
+    font-size:22px;
+  }
+  .top-status-dashboard .dash-upcoming-list{
+    display:flex;
+    overflow-x:auto;
+    gap:8px;
+    padding-bottom:3px;
+    scroll-snap-type:x proximity;
+  }
+  .top-status-dashboard .dash-game-line{
+    flex:0 0 230px;
+    scroll-snap-align:start;
+    padding:9px;
+  }
+  .top-status-dashboard .dash-card-missing{
+    grid-template-columns:1fr;
+    gap:5px;
+  }
+}
+
+
+
+/* ===== CLEAN TOP BAR, EDITABLE UPCOMING PICKS, MOBILE RANKING ===== */
+.account-only-bar{
+  justify-content:flex-end;
+  min-height:36px;
+  gap:10px;
+}
+.account-only-bar [hidden]{display:none!important}
+.account-user-label{font-size:12px;color:var(--muted);margin-left:auto}
+
+.top-status-dashboard .dash-game-line{align-content:start}
+.dash-pred-editor{display:grid;gap:7px;margin-top:7px;padding-top:8px;border-top:1px solid #edf0f6;min-width:0}
+.dash-pred-label{font-size:10px;line-height:1;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:900}
+.dash-pred-controls{display:grid;grid-template-columns:42px 14px 42px minmax(92px,auto);gap:6px;align-items:center;min-width:0}
+.dash-pred-controls input{width:42px;height:34px;padding:3px;text-align:center;font-size:17px;font-weight:800;border-radius:6px}
+.dash-pred-controls>span{text-align:center;font-weight:900;color:var(--muted)}
+.dash-pred-save{height:34px;padding:6px 9px;font-size:12px;white-space:nowrap}
+.dash-pred-save:disabled{opacity:.5;cursor:not-allowed}
+.dash-pred-message{font-size:10px;line-height:1.25;min-height:13px;color:var(--muted);overflow-wrap:anywhere}
+.dash-pred-message.success{color:var(--green);font-weight:800}
+.dash-pred-message.error{color:var(--red);font-weight:800}
+.dash-pred-message.info{color:var(--muted)}
+.dash-pred-admin-note{font-size:11px;color:var(--muted);margin-top:5px}
+
+.rank-row{min-width:0;overflow:hidden}
+.rank-player-info{flex:1;min-width:0;overflow:hidden}
+.rank-player-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rank-player-meta{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rank-pts{flex:0 0 auto;margin-left:auto;white-space:nowrap}
+.rank-num,.rank-move,.rank-row .avatar{flex:0 0 auto}
+.podium-col>div:nth-child(2){max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+@media(max-width:760px){
+  .account-only-bar{padding:5px 0;margin-bottom:8px;min-height:32px}
+  .account-user-label{max-width:65vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top-status-dashboard .dash-game-line{flex-basis:250px}
+  .dash-pred-controls{grid-template-columns:40px 12px 40px minmax(78px,1fr);gap:5px}
+  .dash-pred-controls input{width:40px;height:34px}
+  .dash-pred-save{font-size:11px;padding:5px 7px;overflow:hidden;text-overflow:ellipsis}
+
+  #ranking-content .section{padding:10px}
+  .rank-row{gap:6px;padding:9px 8px;margin-bottom:6px;width:100%}
+  .rank-move{font-size:13px;min-width:16px}
+  .rank-num{font-size:17px;min-width:28px}
+  .rank-row .crown{font-size:15px;margin-right:2px}
+  .rank-row .avatar{width:30px!important;height:30px!important;font-size:12px!important}
+  .rank-player-name{font-size:13px;font-weight:700}
+  .rank-player-meta{font-size:10px}
+  .rank-pts{font-size:20px;min-width:34px;text-align:right}
+  .rank-title-row{align-items:stretch}
+  .rank-title-row>div:last-child{width:100%;display:grid!important;grid-template-columns:1fr;gap:7px!important}
+  .rank-title-row .btn{width:100%;font-size:13px;padding:9px}
+  .podium{gap:5px!important}
+  .podium-col{min-width:0}
+  .podium-col>div:nth-child(2){font-size:11px!important;max-width:92px}
+}
+@media(max-width:390px){
+  .rank-row{gap:4px;padding:8px 6px}
+  .rank-move{min-width:13px;font-size:11px}
+  .rank-num{min-width:24px;font-size:15px}
+  .rank-row .avatar{width:27px!important;height:27px!important}
+  .rank-player-name{font-size:12px}
+  .rank-pts{font-size:18px;min-width:30px}
+}
+
+
+
+/* ===== COMPACT UPCOMING PREDICTION EDITOR ===== */
+@media(min-width:761px){
+  .top-status-dashboard .dash-card{padding:11px 12px}
+  .top-status-dashboard .dash-card-title{margin-bottom:6px}
+  .top-status-dashboard .dash-upcoming-body{gap:12px}
+  .top-status-dashboard .dash-upcoming-list{
+    grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
+    gap:8px;
+  }
+  .top-status-dashboard .dash-game-line{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto auto auto;
+    column-gap:12px;
+    row-gap:2px;
+    align-items:center;
+    padding:9px 10px;
+    min-height:86px;
+  }
+  .top-status-dashboard .dash-game-title,
+  .top-status-dashboard .dash-game-meta{
+    grid-column:1;
+    min-width:0;
+  }
+  .top-status-dashboard .dash-game-title{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dash-pred-editor{
+    grid-column:2;
+    grid-row:1 / span 3;
+    align-self:center;
+    width:210px;
+    margin:0;
+    padding:0 0 0 10px;
+    border-top:none;
+    border-left:1px solid #edf0f6;
+    gap:4px;
+  }
+  .dash-pred-label{font-size:9px}
+  .dash-pred-controls{
+    grid-template-columns:34px 10px 34px 76px;
+    gap:4px;
+  }
+  .dash-pred-controls input{
+    width:34px;
+    height:30px;
+    padding:2px;
+    font-size:15px;
+  }
+  .dash-pred-save{
+    width:76px;
+    height:30px;
+    padding:4px 7px;
+    font-size:11px;
+  }
+  .dash-pred-message{
+    min-height:11px;
+    font-size:9px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
+
+@media(max-width:760px){
+  .top-status-dashboard .dash-game-line{
+    flex-basis:238px;
+    padding:8px;
+    gap:2px;
+  }
+  .dash-pred-editor{
+    gap:4px;
+    margin-top:5px;
+    padding-top:6px;
+  }
+  .dash-pred-label{font-size:9px}
+  .dash-pred-controls{
+    grid-template-columns:34px 10px 34px minmax(58px,1fr);
+    gap:4px;
+  }
+  .dash-pred-controls input{
+    width:34px;
+    height:30px;
+    font-size:15px;
+  }
+  .dash-pred-save{
+    height:30px;
+    padding:4px 6px;
+    font-size:10px;
+  }
+  .dash-pred-message{
+    min-height:11px;
+    font-size:9px;
+  }
+}
+
+
+/* ===== UPCOMING PICKS: COMPACT SIDE UX ===== */
+@media(min-width:761px){
+  .top-status-dashboard .dash-upcoming-list{
+    grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
+    gap:10px;
+  }
+  .top-status-dashboard .dash-game-line{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 178px;
+    grid-template-areas:
+      "title editor"
+      "stage editor"
+      "time editor"
+      "status editor";
+    grid-template-rows:auto auto auto auto;
+    column-gap:14px;
+    row-gap:3px;
+    align-items:center;
+    min-height:112px;
+    padding:14px 14px 12px;
+  }
+  .top-status-dashboard .dash-game-title{
+    grid-area:title;
+    font-size:15px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .top-status-dashboard .dash-game-meta:nth-of-type(1){grid-area:stage}
+  .top-status-dashboard .dash-game-meta:nth-of-type(2){grid-area:time}
+  .top-status-dashboard .dash-game-meta{
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dash-pred-status{
+    grid-area:status;
+    margin:4px 0 0;
+    min-height:16px;
+    font-size:11px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dash-pred-editor{
+    grid-area:editor;
+    align-self:center;
+    width:178px;
+    margin:0;
+    padding:0;
+    border:0;
+  }
+  .dash-pred-controls{
+    display:grid;
+    grid-template-columns:54px 14px 54px;
+    grid-template-areas:
+      "home sep away"
+      "save save save";
+    gap:8px 7px;
+    align-items:center;
+    justify-content:center;
+  }
+  .dash-pred-controls input:first-child{grid-area:home}
+  .dash-pred-controls>span{grid-area:sep}
+  .dash-pred-controls input:nth-of-type(2){grid-area:away}
+  .dash-pred-controls input{
+    width:54px;
+    height:42px;
+    padding:3px;
+    font-size:20px;
+    border-radius:7px;
+  }
+  .dash-pred-save{
+    grid-area:save;
+    width:100%;
+    height:34px;
+    padding:5px 8px;
+    font-size:10px;
+    line-height:1.05;
+    white-space:nowrap;
+  }
+  .dash-pred-admin-note{
+    grid-column:2;
+    grid-row:1 / -1;
+    align-self:center;
+    margin:0;
+    padding-left:12px;
+    border-left:1px solid #edf0f6;
+  }
+}
+
+@media(max-width:760px){
+  .top-status-dashboard .dash-game-line{
+    flex:0 0 270px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 116px;
+    grid-template-areas:
+      "title title"
+      "stage editor"
+      "time editor"
+      "status status";
+    grid-template-rows:auto auto auto auto;
+    column-gap:9px;
+    row-gap:3px;
+    align-items:center;
+    padding:10px;
+    min-height:132px;
+  }
+  .top-status-dashboard .dash-game-title{
+    grid-area:title;
+    font-size:13px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .top-status-dashboard .dash-game-meta:nth-of-type(1){grid-area:stage}
+  .top-status-dashboard .dash-game-meta:nth-of-type(2){grid-area:time}
+  .top-status-dashboard .dash-game-meta{
+    min-width:0;
+    font-size:10px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dash-pred-status{
+    grid-area:status;
+    margin-top:4px;
+    min-height:13px;
+    font-size:9px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .dash-pred-editor{
+    grid-area:editor;
+    width:116px;
+    margin:0;
+    padding:0;
+    border:0;
+  }
+  .dash-pred-controls{
+    display:grid;
+    grid-template-columns:36px 10px 36px;
+    grid-template-areas:
+      "home sep away"
+      "save save save";
+    gap:5px 4px;
+    align-items:center;
+    justify-content:center;
+  }
+  .dash-pred-controls input:first-child{grid-area:home}
+  .dash-pred-controls>span{grid-area:sep;font-size:11px}
+  .dash-pred-controls input:nth-of-type(2){grid-area:away}
+  .dash-pred-controls input{
+    width:36px;
+    height:31px;
+    padding:2px;
+    font-size:15px;
+    border-radius:6px;
+  }
+  .dash-pred-save{
+    grid-area:save;
+    width:100%;
+    height:27px;
+    padding:3px 4px;
+    font-size:8px;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .dash-pred-admin-note{
+    grid-column:1 / -1;
+    grid-row:4;
+    margin-top:5px;
+  }
+}
+
+@media(max-width:390px){
+  .top-status-dashboard .dash-game-line{flex-basis:250px;grid-template-columns:minmax(0,1fr) 108px}
+  .dash-pred-editor{width:108px}
+  .dash-pred-controls{grid-template-columns:34px 9px 34px}
+  .dash-pred-controls input{width:34px;height:30px}
+  .dash-pred-save{font-size:7.5px}
+}
+
+
+/* ===== EXTRA COMPACT PREDICTION CONTROLS ===== */
+@media(min-width:761px){
+  .dash-pred-editor{width:142px!important}
+  .dash-pred-controls{
+    grid-template-columns:42px 10px 42px!important;
+    gap:5px 4px!important;
+  }
+  .dash-pred-controls input{
+    width:42px!important;
+    height:34px!important;
+    font-size:17px!important;
+    padding:2px!important;
+  }
+  .dash-pred-save{
+    height:26px!important;
+    padding:3px 6px!important;
+    font-size:8px!important;
+    border-radius:4px!important;
+  }
+}
+@media(max-width:760px){
+  .top-status-dashboard .dash-game-line{grid-template-columns:minmax(0,1fr) 98px!important}
+  .dash-pred-editor{width:98px!important}
+  .dash-pred-controls{
+    grid-template-columns:30px 8px 30px!important;
+    gap:4px 3px!important;
+  }
+  .dash-pred-controls input{
+    width:30px!important;
+    height:27px!important;
+    font-size:14px!important;
+    padding:1px!important;
+  }
+  .dash-pred-controls>span{font-size:9px!important}
+  .dash-pred-save{
+    height:22px!important;
+    padding:2px 3px!important;
+    font-size:7px!important;
+    border-radius:4px!important;
+  }
+}
+@media(max-width:390px){
+  .top-status-dashboard .dash-game-line{grid-template-columns:minmax(0,1fr) 92px!important}
+  .dash-pred-editor{width:92px!important}
+}
 </style>
 </head>
 <body>
@@ -1630,13 +2185,12 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
 </div>
 
 <div class="app" id="main-app" style="display:none">
-  <!-- SYNC STATUS -->
-  <div class="sync-bar">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-label">Conectando ao Firebase...</span>
-    <span id="api-status-label" class="api-status" style="margin-left:8px"></span>
-    <button class="api-refresh-btn" onclick="manualAPIRefresh()" title="Atualizar placares da API">↻</button>
-    <span style="margin-left:auto;font-size:11px" id="user-label"></span>
+  <!-- CONTA DO USUÁRIO: informações técnicas ficam ocultas da UX -->
+  <div class="sync-bar account-only-bar">
+    <div class="sync-dot" id="sync-dot" hidden></div>
+    <span id="sync-label" hidden></span>
+    <span id="api-status-label" class="api-status" hidden></span>
+    <span class="account-user-label" id="user-label"></span>
     <button class="top-logout-btn" onclick="logoutCurrentUser()">Sair</button>
   </div>
 
@@ -1647,6 +2201,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focu
     <div class="header-title"><div class="wc-logo" aria-label="Logo visual Copa 2026"><span class="wc-main">26</span><span class="wc-sub">WORLD CUP</span></div><h1>BOLÃO DA COPA 2026</h1></div>
     <p>Palpites em tempo real com seus amigos</p>
   </div>
+
+  <div id="top-status-dashboard" class="top-status-dashboard"></div>
 
   <div class="tabs">
     <button class="tab active" data-tab="jogos" onclick="switchTab('jogos')">🏟 Jogos</button>
@@ -1913,6 +2469,8 @@ let openPhaseSections = {};
 let selectedPhaseRound = 'Fase de Grupos';
 let selectedPhaseGroup = 'Grupo A';
 let simulatorScores = {};
+let dashboardPredictionDrafts = {};
+let dashboardPredictionMessages = {};
 
 
 // ─── Knockout bracket labels ─────────────────────────────────────
@@ -3978,6 +4536,31 @@ function setGameView(view){
   renderGames();
 }
 
+
+function openDashboardGameInPhase(gid){
+  const g = (state.games || {})[gid];
+  if(!g) return;
+
+  currentGameView = 'phase';
+  selectedPhaseRound = roundKeyForGame(g);
+  if(selectedPhaseRound === 'Fase de Grupos' && /^Grupo\s+[A-L]/i.test(String(g.stage || ''))){
+    selectedPhaseGroup = String(g.stage);
+  }
+
+  switchTab('jogos');
+  renderGames();
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      const target = document.getElementById('phase-game-'+gid);
+      if(!target) return;
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      target.classList.add('phase-ref-match-focus');
+      window.setTimeout(()=>target.classList.remove('phase-ref-match-focus'), 2200);
+    });
+  });
+}
+
 function gamePhaseBucket(g){
   const st = String(g.stage||'');
   if(/^Grupo\s+[A-L]/i.test(st) || st === 'Fase de Grupos') return 'Fase de Grupos';
@@ -4344,7 +4927,7 @@ function renderPhaseReferenceMatch(g){
   const statusBadge = gStatus.label ? `<span class="game-status-badge ${gStatus.css}">${gStatus.label}</span> ` : '';
   const deadlineNote = predictionDeadlineNote(g);
   const deadlineNoteClass = canEditPrediction(g) ? 'open' : 'locked';
-  return `<div class="phase-ref-match${gStatus.status==='live'||gStatus.status==='halftime'?' phase-ref-live':''}">
+  return `<div id="phase-game-${g.id}" class="phase-ref-match${gStatus.status==='live'||gStatus.status==='halftime'?' phase-ref-live':''}">
     <div class="phase-ref-time">${statusBadge}${dateTime}<div class="brt-note">Horário de Brasília</div>${knockoutMetaHTML(g)}</div>
     <div class="phase-ref-body">
       <div class="phase-ref-team phase-ref-home">
@@ -4397,13 +4980,97 @@ function stageDescriptionForGame(g){
   if(rk === 'Fase de Grupos') return `Primeira Rodada ${g.stage || ''}`.trim();
   return phaseRoundLabel(rk);
 }
+function dashboardPredictionDraftForGame(gid){
+  const pred = ((state.predictions||{})[gid]||{})[myId] || {};
+  const saved = hasPredictionPayload(pred);
+  const draft = dashboardPredictionDrafts[gid];
+  return draft || {
+    home:saved ? String(pred.home) : '',
+    away:saved ? String(pred.away) : ''
+  };
+}
+function setDashboardPredictionMessage(gid, text, type='info'){
+  dashboardPredictionMessages[gid] = {text, type};
+  const msg = document.getElementById('dash-pred-msg-'+gid);
+  if(!msg) return;
+  msg.textContent = text;
+  msg.className = 'dash-pred-message ' + (type || 'info');
+}
+function markDashboardPredictionDirty(gid, side, value){
+  const current = dashboardPredictionDraftForGame(gid);
+  dashboardPredictionDrafts[gid] = {...current, [side]:value};
+  setDashboardPredictionMessage(gid, 'Alteração não salva.', 'info');
+}
+function saveDashboardPrediction(gid){
+  const g = state.games[gid];
+  if(!g || !canEditPrediction(g)){
+    alert('Os palpites desse jogo já foram travados.');
+    renderGames();
+    return;
+  }
+  const homeEl = document.getElementById('dash-pred-home-'+gid);
+  const awayEl = document.getElementById('dash-pred-away-'+gid);
+  const home = homeEl ? homeEl.value.trim() : '';
+  const away = awayEl ? awayEl.value.trim() : '';
+  const homeError = validatePredictionValue(home, 'casa');
+  if(homeError){
+    setDashboardPredictionMessage(gid, homeError, 'error');
+    if(homeEl) homeEl.focus();
+    return;
+  }
+  const awayError = validatePredictionValue(away, 'visitante');
+  if(awayError){
+    setDashboardPredictionMessage(gid, awayError, 'error');
+    if(awayEl) awayEl.focus();
+    return;
+  }
+  const path = 'predictions/'+gid+'/'+myId;
+  const payload = {home:Number(home), away:Number(away), updatedAt:firebase.database.ServerValue.TIMESTAMP};
+  setDashboardPredictionMessage(gid, 'Salvando...', 'info');
+  db.ref(path).set(payload).then(()=>db.ref(path).once('value')).then(snap=>{
+    const saved = snap.val() || {};
+    if(Number(saved.home) === Number(home) && Number(saved.away) === Number(away)){
+      delete dashboardPredictionDrafts[gid];
+      dashboardPredictionMessages[gid] = {text:'✅ Palpite salvo.', type:'success'};
+      renderTopStatusDashboard(sortedGames());
+    }else{
+      setDashboardPredictionMessage(gid, 'Não foi possível confirmar o salvamento.', 'error');
+    }
+  }).catch(err=>{
+    setDashboardPredictionMessage(gid, 'Erro ao salvar.', 'error');
+    alert('Erro ao salvar palpite: '+err.message);
+  });
+}
+function dashboardPredictionEditorHTML(g, me){
+  if(!me || me.admin === true) return '<div class="dash-pred-admin-note">Admin não participa dos palpites.</div>';
+  const pred = ((state.predictions||{})[g.id]||{})[myId] || {};
+  const saved = hasPredictionPayload(pred);
+  const draft = dashboardPredictionDraftForGame(g.id);
+  const editable = canEditPrediction(g);
+  const when = saved ? `Palpite salvo em ${formatPredictionUpdatedAtForReport(pred.updatedAt)}` : 'Nenhum palpite salvo ainda.';
+  const message = dashboardPredictionMessages[g.id];
+  const messageText = message ? message.text : (editable ? when : (saved ? when : 'Palpites encerrados.'));
+  const messageType = message ? message.type : (saved ? 'success' : 'info');
+  const buttonLabel = saved ? 'Salvar alteração' : 'Salvar palpite';
+  return `<div id="dash-pred-msg-${g.id}" class="dash-pred-message dash-pred-status ${messageType}">${escapeHTML(messageText)}</div>
+  <div class="dash-pred-editor">
+    <div class="dash-pred-controls">
+      <input id="dash-pred-home-${g.id}" type="number" min="0" max="20" step="1" inputmode="numeric" value="${escapeHTML(draft.home)}" placeholder="-" ${editable?'':'readonly'} oninput="markDashboardPredictionDirty('${g.id}','home',this.value)" aria-label="Palpite ${escapeHTML(g.home)}">
+      <span>×</span>
+      <input id="dash-pred-away-${g.id}" type="number" min="0" max="20" step="1" inputmode="numeric" value="${escapeHTML(draft.away)}" placeholder="-" ${editable?'':'readonly'} oninput="markDashboardPredictionDirty('${g.id}','away',this.value)" aria-label="Palpite ${escapeHTML(g.away)}">
+      <button class="btn btn-gold dash-pred-save" type="button" onclick="saveDashboardPrediction('${g.id}')" ${editable?'':'disabled'}>${buttonLabel}</button>
+    </div>
+  </div>`;
+}
+
 function phaseDashboardHTML(allGames){
   const now = new Date();
-  const datedGames = allGames.map(g=>({g, start:getGameStart(g)})).filter(item=>item.start);
-  const nextItems = datedGames.filter(item=>item.start >= now).sort((a,b)=>a.start-b.start);
-  const targetDate = nextItems.length
-    ? nextItems[0].g.date
-    : (datedGames.sort((a,b)=>b.start-a.start)[0]?.g.date || null);
+  const datedGames = allGames
+    .filter(g=>!hasGameResult(g))
+    .map(g=>({g,start:getGameStart(g)}))
+    .filter(item=>item.start && item.start >= now)
+    .sort((a,b)=>a.start-b.start);
+  const targetDate = datedGames[0] ? datedGames[0].g.date : null;
   const upcoming = targetDate
     ? datedGames.filter(item=>item.g.date === targetDate).sort((a,b)=>a.start-b.start).map(item=>item.g)
     : [];
@@ -4415,20 +5082,32 @@ function phaseDashboardHTML(allGames){
   }
   const targetDateLabel = upcoming.length ? gameDateOnly(upcoming[0]) : '';
   const upcomingText = upcoming.length ? `<div class="dash-upcoming-list">${upcoming.map(g=>{
-    const saved = me && me.admin !== true && isPredictionSavedForGame(g.id, myId);
-    const status = me && me.admin === true ? '' : `<div class="dash-status ${saved?'saved':'pending'}">${saved?'Palpite Salvo':'Palpite pendente'}</div>`;
     return `<div class="dash-game-line">
-      <div class="dash-game-title">${escapeHTML(g.home)} x ${escapeHTML(g.away)} <span class="dash-game-meta">(${escapeHTML(stageDescriptionForGame(g))})</span></div>
+      <div class="dash-game-title">${escapeHTML(g.home)} x ${escapeHTML(g.away)}</div>
+      <div class="dash-game-meta"><button class="dash-game-phase-link" type="button" onclick="openDashboardGameInPhase('${g.id}')" title="Abrir este jogo na visualização por fase">${escapeHTML(stageDescriptionForGame(g))}</button></div>
       <div class="dash-game-meta">${escapeHTML(gameDateOnly(g))} ${escapeHTML(gameHourOnly(g))}</div>
-      ${status}
+      ${dashboardPredictionEditorHTML(g, me)}
     </div>`;
-  }).join('')}</div>` : 'Nenhum próximo jogo no campeonato.';
+  }).join('')}</div>` : '<div class="dash-empty-line">Nenhum próximo jogo no campeonato.</div>';
   const roundLabel = selectedPhaseRound === 'Fase de Grupos' ? 'Fase de Grupos' : phaseRoundLabel(selectedPhaseRound);
   const missingText = me && me.admin === true ? 'Admin não participa dos palpites.' : `${missing} palpite${missing===1?'':'s'} pendente${missing===1?'':'s'} na rodada ${escapeHTML(roundLabel)}.`;
-  return `<div class="phase-mini-dashboard">
-    <div class="dash-card"><div class="dash-card-title">Próximos jogos do campeonato${targetDateLabel ? ' · '+escapeHTML(targetDateLabel) : ''}</div><div class="dash-card-main">${upcoming.length}</div><div class="dash-card-sub">${upcomingText}</div></div>
-    <div class="dash-card"><div class="dash-card-title">Palpites faltantes da rodada</div><div class="dash-card-main">${me && me.admin === true ? '-' : missing}</div><div class="dash-card-sub">${missingText}</div></div>
+  return `<div class="phase-mini-dashboard top-mini-dashboard">
+    <div class="dash-card dash-card-upcoming">
+      <div class="dash-card-title">Próximos jogos do campeonato${targetDateLabel ? ' · '+escapeHTML(targetDateLabel) : ''}</div>
+      <div class="dash-upcoming-body"><div class="dash-card-main">${upcoming.length}</div><div class="dash-card-sub">${upcomingText}</div></div>
+    </div>
+    <div class="dash-card dash-card-missing">
+      <div class="dash-card-title">Palpites faltantes da rodada</div>
+      <div class="dash-card-main">${me && me.admin === true ? '-' : missing}</div>
+      <div class="dash-card-sub">${missingText}</div>
+    </div>
   </div>`;
+}
+
+function renderTopStatusDashboard(games){
+  const el = document.getElementById('top-status-dashboard');
+  if(!el) return;
+  el.innerHTML = phaseDashboardHTML(games || sortedGames());
 }
 
 function upcomingGamesForView(games){
@@ -4501,13 +5180,15 @@ function renderGamesByPhase(games){
   const content = selectedGames.length
     ? `<div class="phase-ref-grid">${selectedGames.map(renderPhaseReferenceMatch).join('')}</div>`
     : `<div class="phase-empty-light">Nenhum jogo cadastrado nesta fase ainda.</div>`;
-  return `<div class="phase-ref">${roundTabs}${groupTabs}<div class="phase-content">${phaseDashboardHTML(games)}<div class="phase-heading"><h2>${escapeHTML(title)}</h2></div>${content}</div></div>`;
+  return `<div class="phase-ref">${roundTabs}${groupTabs}<div class="phase-content"><div class="phase-heading"><h2>${escapeHTML(title)}</h2></div>${content}</div></div>`;
 }
 
 function renderGames(){
   const games = sortedGames();
+  renderTopStatusDashboard(games);
   const list = document.getElementById('games-list');
   const noG = document.getElementById('no-games');
+  if(!list || !noG) return;
   if(!games.length){ list.innerHTML=''; noG.style.display='block'; return; }
   noG.style.display='none';
   list.innerHTML = currentGameView === 'upcoming' ? renderGamesUpcoming(games) : renderGamesByPhase(games);
@@ -5003,9 +5684,9 @@ function renderRanking(){
       return `<div class="rank-row">
         ${rankMoveHTML(p.id,i,previousPositions)}<span class="rank-num" style="color:${posC}">${i===0?'<span class="crown">👑</span>':''}${i+1}°</span>
         <div class="avatar col-${p.colorIdx||0}" style="width:32px;height:32px;font-size:13px">${initials(p.name)}</div>
-        <div style="flex:1">
-          <div style="font-weight:500;font-size:14px">${escapeHTML(p.name)}${p.admin?'<span style="font-size:10px;color:var(--gold);margin-left:4px">★</span>':''}</div>
-          <div style="font-size:11px;color:var(--muted)">${p.played} jogos · ${p.exact} exatos${p.specialTotal ? ' · bônus especiais: '+p.specialTotal+'pts' : ''}</div>
+        <div class="rank-player-info">
+          <div class="rank-player-name">${escapeHTML(p.name)}${p.admin?'<span style="font-size:10px;color:var(--gold);margin-left:4px">★</span>':''}</div>
+          <div class="rank-player-meta">${p.played} jogos · ${p.exact} exatos${p.specialTotal ? ' · bônus especiais: '+p.specialTotal+'pts' : ''}</div>
         </div>
         <span class="rank-pts">${p.total}</span>
       </div>`;
